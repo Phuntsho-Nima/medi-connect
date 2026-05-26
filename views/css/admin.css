@@ -1,0 +1,139 @@
+/* ── ADMIN DASHBOARD ── purple accent, layered over base.css ── */
+
+/* Purple colour tokens */
+:root {
+  --role-grad:   linear-gradient(135deg, #8b5cf6, #7c3aed);
+  --role-color:  #7c3aed;
+  --role-hover:  #6d28d9;
+  --role-light:  #ede9fe;
+  --role-border: #c4b5fd;
+  --role-shadow: rgba(124, 58, 237, 0.2);
+}
+
+/* Nav logo */
+.logo, .mobile-logo {
+  background: var(--role-grad);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  cursor: pointer;
+}}
+
+/* Desktop nav active */
+.desktop-nav-links li.active,
+.desktop-nav-links a.nav-link.active {
+  background: var(--role-grad);
+  box-shadow: 0 4px 12px var(--role-shadow);
+}
+.desktop-nav-links li:hover,
+.desktop-nav-links a.nav-link:hover { color: var(--role-color); background: rgba(124,58,237,0.05); }
+
+/* Bottom nav active */
+.bottom-nav ul li.active { color: var(--role-color); }
+.bottom-nav ul li.active::before { background: var(--role-grad); }
+.bottom-nav ul li:not(.active):active { background: rgba(124,58,237,0.06); }
+
+/* Buttons */
+.btn-primary { background: var(--role-grad); box-shadow: 0 4px 15px var(--role-shadow); }
+.btn-primary:hover { background: var(--role-hover); box-shadow: 0 6px 20px var(--role-shadow); }
+.btn-logout-confirm { background: var(--role-grad); }
+.btn-logout-confirm:hover { background: var(--role-hover); }
+
+/* Welcome bar */
+.welcome-section::before { background: var(--role-grad); }
+
+/* Quick actions */
+.quick-action-btn i { color: var(--role-color); }
+.quick-action-btn:active { background: #f5f3ff; border-color: var(--role-border); }
+
+/* Inputs */
+select:focus, input:focus { border-color: var(--role-color); box-shadow: 0 0 0 4px rgba(124,58,237,0.1); }
+
+/* ── STAT CARDS ── */
+.stats-grid-4 { display: grid; grid-template-columns: repeat(4,1fr); gap: 20px; margin-bottom: 32px; }
+
+.stat-card.purple { background: var(--role-grad); color: #fff; }
+.stat-card.purple .stat-icon { background: rgba(255,255,255,0.2); color: #fff; }
+.stat-card.purple .stat-content h4,
+.stat-card.purple .stat-content p { color: #fff; }
+
+.stat-card.amber { background: linear-gradient(135deg,#fff,#fffbeb); }
+.stat-card.amber .stat-icon { background: #fef3c7; color: #d97706; }
+
+.stat-card.rose { background: linear-gradient(135deg,#fff,#fff1f2); }
+.stat-card.rose .stat-icon { background: #fee2e2; color: #dc2626; }
+
+/* ── STATUS BADGES ── */
+.status-active   { background: #dcfce7; color: #15803d; border: 1px solid #bbf7d0; }
+.status-inactive { background: #f1f5f9; color: #475569; border: 1px solid #e2e8f0; }
+.status-pending  { background: #fef9c3; color: #a16207; border: 1px solid #fde68a; }
+
+/* ── ROLE BADGES ── */
+.role-badge { padding:3px 10px; border-radius:9999px; font-size:0.74rem; font-weight:700; display:inline-block; text-transform:uppercase; letter-spacing:0.3px; }
+.role-admin   { background:#ede9fe; color:#7c3aed; border:1px solid #c4b5fd; }
+.role-doctor  { background:#ccfbf1; color:#0d9488; border:1px solid #99f6e4; }
+.role-patient { background:#dbeafe; color:#1d4ed8; border:1px solid #bfdbfe; }
+
+/* ── ACTION BUTTONS ── */
+.btn-edit     { background:#eff6ff; color:#1d4ed8; border:1px solid #bfdbfe; }
+.btn-edit:hover { background:#dbeafe; }
+.btn-deact    { background:#fff7ed; color:#c2410c; border:1px solid #fed7aa; }
+.btn-deact:hover { background:#ffedd5; }
+.btn-activate { background:#f0fdf4; color:#15803d; border:1px solid #bbf7d0; }
+.btn-activate:hover { background:#dcfce7; }
+
+/* ── TWO-COLUMN LAYOUT ── */
+.dash-cols { display:grid; grid-template-columns:1fr 1fr; gap:24px; margin-bottom:32px; }
+
+/* ── ACTIVITY FEED ── */
+.feed-item { display:flex; align-items:flex-start; gap:14px; padding:13px 0; border-bottom:1px solid var(--border); }
+.feed-item:last-child { border-bottom:none; padding-bottom:0; }
+.feed-dot { width:10px; height:10px; border-radius:50%; margin-top:5px; flex-shrink:0; }
+.feed-dot.purple { background:#8b5cf6; }
+.feed-dot.blue   { background:#3b82f6; }
+.feed-dot.amber  { background:#f59e0b; }
+.feed-dot.rose   { background:#f43f5e; }
+.feed-dot.green  { background:#10b981; }
+.feed-text strong { display:block; font-size:0.9rem; font-weight:600; margin-bottom:2px; }
+.feed-text span   { font-size:0.8rem; color:var(--text-muted); }
+
+/* ── BAR CHART ── */
+.bar-chart { display:flex; flex-direction:column; gap:12px; }
+.bar-row   { display:flex; align-items:center; gap:12px; }
+.bar-label { min-width:90px; font-size:0.82rem; font-weight:600; color:var(--text-muted); }
+.bar-track { flex:1; background:#f1f5f9; border-radius:999px; height:10px; overflow:hidden; }
+.bar-fill  { height:100%; border-radius:999px; background:var(--role-grad); transition:width 0.7s cubic-bezier(.4,0,.2,1); }
+.bar-fill.green { background:linear-gradient(90deg,#34d399,#10b981); }
+.bar-fill.amber { background:linear-gradient(90deg,#fbbf24,#f59e0b); }
+.bar-fill.rose  { background:linear-gradient(90deg,#fb7185,#f43f5e); }
+.bar-val   { min-width:32px; font-size:0.82rem; font-weight:700; color:var(--text-main); text-align:right; }
+
+/* ── SYSTEM NOTICE BANNER ── */
+.notice-banner {
+  background: linear-gradient(135deg,#ede9fe,#ddd6fe);
+  border: 1px solid var(--role-border);
+  border-radius: 12px; padding: 12px 18px;
+  display: flex; align-items: center; gap: 12px;
+  margin-bottom: 24px; font-size: 0.88rem;
+  color: var(--role-color); font-weight: 500;
+}
+.notice-banner i { font-size:1rem; flex-shrink:0; }
+
+/* ── SETTINGS INFO ROWS ── */
+.info-row { display:flex; justify-content:space-between; align-items:center; padding:13px 0; border-bottom:1px solid var(--border); }
+.info-row:last-child { border-bottom:none; }
+.info-key   { font-weight:600; color:var(--text-muted); font-size:0.9rem; }
+.info-value { font-weight:700; color:var(--text-main); }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 950px) {
+  .stats-grid-4 { grid-template-columns: repeat(2,1fr); }
+  .dash-cols    { grid-template-columns: 1fr; }
+}
+@media (max-width: 750px) {
+  .stats-grid-4 { grid-template-columns: repeat(2,1fr); gap:12px; margin-bottom:20px; }
+  .stat-card    { padding:18px 14px; gap:12px; border-radius:14px; }
+  .stat-card .stat-icon { width:44px; height:44px; font-size:1.2rem; border-radius:10px; }
+  .stat-content h4 { font-size:1.5rem; }
+  .stat-content p  { font-size:0.78rem; }
+  .dash-cols { gap:0; }
+}

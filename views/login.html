@@ -1,0 +1,488 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MediConnect - Hospital Management Portal</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="css/login.css" />
+  </head>
+  <body>
+
+    <!-- ══ LOGIN PAGE ══ -->
+    <div id="loginPage" class="page-section active">
+      <div class="auth-container">
+        <div class="auth-left">
+          <div class="orb-mid"></div>
+          <div class="auth-left-content">
+            <div class="brand-mark">
+              <div class="brand-icon"><i class="fas fa-hospital-alt"></i></div>
+              <span class="brand-name">MediConnect</span>
+            </div>
+            <h2>Your Health, Our Priority</h2>
+            <p>The smartest way to manage your healthcare experience.</p>
+            <div class="auth-features">
+              <div class="auth-feature">
+                <div class="feature-icon"><i class="fas fa-calendar-check"></i></div>
+                <div class="auth-feature-text"><h4>Easy Appointments</h4><p>Schedule appointments with ease</p></div>
+              </div>
+              <div class="auth-feature">
+                <div class="feature-icon"><i class="fas fa-file-medical"></i></div>
+                <div class="auth-feature-text"><h4>Medical Records</h4><p>Access your full health history anytime</p></div>
+              </div>
+              <div class="auth-feature">
+                <div class="feature-icon"><i class="fas fa-shield-alt"></i></div>
+                <div class="auth-feature-text"><h4>Secure & Safe</h4><p>Your data is encrypted and protected</p></div>
+              </div>
+              <div class="auth-feature">
+                <div class="feature-icon"><i class="fas fa-headset"></i></div>
+                <div class="auth-feature-text"><h4>24/7 Support</h4><p>Round the clock care team support</p></div>
+              </div>
+            </div>
+            <!-- Demo account hints -->
+            <div class="demo-accounts">
+              <p class="demo-label">Demo Accounts</p>
+              <div class="demo-row"><i class="fas fa-user-shield"></i><span>admin@gmail.com / admin123</span><span class="demo-dest">→ Admin</span></div>
+              <div class="demo-row"><i class="fas fa-user-md"></i><span>Doctor ID: 1 / doctor123</span><span class="demo-dest">→ Doctor</span></div>
+              <div class="demo-row"><i class="fas fa-user"></i><span>CID / your password</span><span class="demo-dest">→ Patient</span></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="auth-right">
+          <div class="auth-form-wrapper">
+            <div class="mobile-brand">
+              <div class="brand-icon"><i class="fas fa-hospital-alt"></i></div>
+              <span>MediConnect</span>
+            </div>
+            <div class="auth-header">
+              <div class="auth-logo" onclick="goToHome(event)"><i class="fas fa-hospital-alt"></i></div>
+              <h1>Welcome Back</h1>
+              <p>Sign in to access your health portal</p>
+            </div>
+
+            <!-- Live role indicator -->
+            <div id="roleIndicator" class="role-indicator" style="display:none"></div>
+
+           <form id="loginForm" onsubmit="handleLogin(event)" autocomplete="off">
+            <div class="form-group">
+              <label for="loginRole">Login As</label>
+              <div class="input-icon">
+                <i class="fas fa-user-tag icon-prefix"></i>
+                <select id="loginRole" required onchange="updateLoginFields()">
+                  <option value="">Select Role</option>
+                  <option value="patient">Patient</option>
+                  <option value="doctor">Doctor</option>
+                  <option value="admin">Admin</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-group" id="fieldCid" style="display:none">
+              <label for="loginCid">CID Number</label>
+              <div class="input-icon">
+                <i class="fas fa-id-card icon-prefix"></i>
+                  <input type="text" id="loginCid" placeholder="e.g. 10101010101" />
+              </div>
+            </div>
+            <div class="form-group" id="fieldEmail" style="display:none">
+              <label for="loginEmail">Email Address</label>
+              <div class="input-icon">
+                <i class="fas fa-envelope icon-prefix"></i>
+                <input type="text" id="loginEmail" placeholder="admin@gmail.com" />
+              </div>
+            </div>
+
+            <div class="form-group" id="fieldDoctorId" style="display:none">
+              <label for="loginDoctorId">Doctor ID</label>
+              <div class="input-icon">
+                <i class="fas fa-user-md icon-prefix"></i>
+                <input type="number" id="loginDoctorId" placeholder="e.g. 1" />
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="loginPassword">Password</label>
+              <div class="input-icon">
+                <i class="fas fa-lock icon-prefix"></i>
+                <input type="password" id="loginPassword" placeholder="••••••••" required />
+              </div>
+            </div>
+
+            <div class="form-group remember-forgot">
+              <label><input type="checkbox" style="width:auto;cursor:pointer" /> Remember me</label>
+              <a href="#" onclick="goToForgotPassword(event)">Forgot password?</a>
+            </div>
+
+            <button type="submit" class="btn btn-primary" onclick="addRipple(event)">
+              <i class="fas fa-sign-in-alt"></i> Sign In
+            </button>
+          </form>
+            <div class="auth-footer">Don't have an account? <a href="#" onclick="goToRegister(event)">Create one now</a></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ REGISTER PAGE ══ -->
+    <div id="registerPage" class="page-section">
+      <div class="auth-container">
+        <div class="auth-left">
+          <div class="orb-mid"></div>
+          <div class="auth-left-content">
+            <div class="brand-mark">
+              <div class="brand-icon"><i class="fas fa-hospital-alt"></i></div>
+              <span class="brand-name">MediConnect</span>
+            </div>
+            <h2>Join Our Health Community</h2>
+            <p>Thousands of patients trust us every day.</p>
+            <div class="auth-features">
+              <div class="auth-feature"><div class="feature-icon"><i class="fas fa-user-md"></i></div><div class="auth-feature-text"><h4>Expert Doctors</h4><p>Connect with qualified healthcare professionals</p></div></div>
+              <div class="auth-feature"><div class="feature-icon"><i class="fas fa-mobile-alt"></i></div><div class="auth-feature-text"><h4>Mobile Friendly</h4><p>Access anywhere, anytime from any device</p></div></div>
+              <div class="auth-feature"><div class="feature-icon"><i class="fas fa-check-circle"></i></div><div class="auth-feature-text"><h4>Free Registration</h4><p>No hidden charges or subscription fees</p></div></div>
+              <div class="auth-feature"><div class="feature-icon"><i class="fas fa-star"></i></div><div class="auth-feature-text"><h4>Top Rated</h4><p>Trusted by thousands of patients</p></div></div>
+            </div>
+          </div>
+        </div>
+        <div class="auth-right">
+          <div class="auth-form-wrapper">
+            <div class="mobile-brand"><div class="brand-icon"><i class="fas fa-hospital-alt"></i></div><span>MediConnect</span></div>
+            <div class="auth-header">
+              <div class="auth-logo"><i class="fas fa-user-plus"></i></div>
+              <h1>Create Account</h1>
+              <p>Join our healthcare community today</p>
+            </div>
+            <form id="registerForm" onsubmit="handleRegister(event)" autocomplete="off">
+              <div class="form-group"><label for="registerName">Full Name</label><div class="input-icon"><i class="fas fa-user icon-prefix"></i><input type="text" id="registerName" placeholder="Tashi Dorji" required /></div></div>
+              <div class="form-group"><label for="registerCid">CID Number</label><div class="input-icon"><i class="fas fa-id-card icon-prefix"></i><input type="text" id="registerCid" placeholder="e.g. 10101010101" required /></div></div>
+              <div class="form-group"><label for="registerPhone">Phone Number</label><div class="input-icon"><i class="fas fa-phone icon-prefix"></i><input type="tel" id="registerPhone" placeholder="17976624" required /></div></div>
+              <div class="form-group">
+                <label for="registerPassword">Password</label>
+                <div class="input-icon"><i class="fas fa-lock icon-prefix"></i><input type="password" id="registerPassword" placeholder="••••••••" required oninput="checkPasswordStrength()" /></div>
+                <div class="password-strength"><div id="passwordStrengthBar" class="password-strength-bar"></div></div>
+              </div>
+              <div class="form-group"><label for="registerConfirmPassword">Confirm Password</label><div class="input-icon"><i class="fas fa-lock icon-prefix"></i><input type="password" id="registerConfirmPassword" placeholder="••••••••" required /></div></div>
+              <button type="submit" class="btn btn-primary" onclick="addRipple(event)"><i class="fas fa-user-plus"></i> Create Account</button>
+            </form>
+            <div class="auth-footer">Already have an account? <a href="#" onclick="goToLogin(event)">Sign in here</a></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ FORGOT PASSWORD PAGE ══ -->
+    <div id="forgotPasswordPage" class="page-section">
+      <div class="auth-container">
+        <div class="auth-left">
+          <div class="orb-mid"></div>
+          <div class="auth-left-content">
+            <div class="brand-mark"><div class="brand-icon"><i class="fas fa-hospital-alt"></i></div><span class="brand-name">MediConnect</span></div>
+            <h2>Reset Your Password</h2>
+            <p>We'll get you back in safely and quickly.</p>
+            <div class="auth-features">
+              <div class="auth-feature"><div class="feature-icon"><i class="fas fa-envelope-open"></i></div><div class="auth-feature-text"><h4>Email Verification</h4><p>We'll send you a secure reset link</p></div></div>
+              <div class="auth-feature"><div class="feature-icon"><i class="fas fa-key"></i></div><div class="auth-feature-text"><h4>New Password</h4><p>Create a strong new password</p></div></div>
+              <div class="auth-feature"><div class="feature-icon"><i class="fas fa-check"></i></div><div class="auth-feature-text"><h4>Instant Access</h4><p>Get back to your account immediately</p></div></div>
+              <div class="auth-feature"><div class="feature-icon"><i class="fas fa-lock-open"></i></div><div class="auth-feature-text"><h4>Secure Process</h4><p>Industry-standard encryption</p></div></div>
+            </div>
+          </div>
+        </div>
+        <div class="auth-right">
+          <div class="auth-form-wrapper">
+            <div class="mobile-brand"><div class="brand-icon"><i class="fas fa-hospital-alt"></i></div><span>MediConnect</span></div>
+            <div class="auth-header"><div class="auth-logo"><i class="fas fa-key"></i></div><h1>Forgot Password?</h1><p>Enter your email to receive a reset link</p></div>
+            <div id="forgotStep1">
+              <form id="forgotForm" onsubmit="handleForgotPassword(event)">
+                <div class="form-group"><label for="forgotEmail">Email Address</label><div class="input-icon"><i class="fas fa-envelope icon-prefix"></i><input type="email" id="forgotEmail" placeholder="your@email.com" required /></div></div>
+                <button type="submit" class="btn btn-primary" onclick="addRipple(event)"><i class="fas fa-paper-plane"></i> Send Reset Link</button>
+              </form>
+            </div>
+            <div id="forgotStep2" style="display:none">
+              <form id="resetPasswordForm" onsubmit="handleResetPassword(event)">
+                <div class="info-card"><i class="fas fa-check-circle"></i> Check your email for the reset verification code.</div>
+                <div class="form-group" style="animation-delay:0.1s"><label for="resetCode">Verification Code</label><div class="input-icon"><i class="fas fa-key icon-prefix"></i><input type="text" id="resetCode" placeholder="Enter code from email" required /></div></div>
+                <div class="form-group" style="animation-delay:0.18s"><label for="newPassword">New Password</label><div class="input-icon"><i class="fas fa-lock icon-prefix"></i><input type="password" id="newPassword" placeholder="••••••••" required /></div></div>
+                <div class="form-group" style="animation-delay:0.26s"><label for="confirmNewPassword">Confirm Password</label><div class="input-icon"><i class="fas fa-lock icon-prefix"></i><input type="password" id="confirmNewPassword" placeholder="••••••••" required /></div></div>
+                <button type="submit" class="btn btn-primary" onclick="addRipple(event)"><i class="fas fa-check"></i> Reset Password</button>
+              </form>
+            </div>
+            <div class="auth-footer">Remember your password? <a href="#" onclick="goToLogin(event)">Sign in here</a></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <style>
+      /* Demo accounts panel */
+      .demo-accounts {
+        margin-top: 28px;
+        background: rgba(255,255,255,0.08);
+        border: 1px solid rgba(255,255,255,0.15);
+        border-radius: 14px;
+        padding: 16px 18px;
+      }
+      .demo-label {
+        font-size: 0.72rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        color: rgba(255,255,255,0.45);
+        margin-bottom: 10px;
+      }
+      .demo-row {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 7px 0;
+        border-bottom: 1px solid rgba(255,255,255,0.07);
+        font-size: 0.82rem;
+        color: rgba(255,255,255,0.8);
+      }
+      .demo-row:last-child { border-bottom: none; }
+      .demo-row i { width: 16px; opacity: 0.7; }
+      .demo-dest { margin-left: auto; opacity: 0.45; font-size: 0.75rem; }
+      /* Role indicator */
+      .role-indicator {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 14px;
+        border-radius: 10px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        margin-bottom: 16px;
+        transition: all 0.25s;
+      }
+      .role-indicator.patient { background:#dbeafe; color:#1d4ed8; border:1px solid #bfdbfe; }
+      .role-indicator.doctor  { background:#ccfbf1; color:#0d9488; border:1px solid #99f6e4; }
+      .role-indicator.admin   { background:#ede9fe; color:#7c3aed; border:1px solid #c4b5fd; }
+    </style>
+
+    <script>
+  // ── ROLE FIELD SWITCHING ─────────────────────────────────────────
+  function updateLoginFields() {
+    const role = document.getElementById('loginRole').value;
+    document.getElementById('fieldCid').style.display      = role === 'patient' ? 'block' : 'none';
+    document.getElementById('fieldEmail').style.display    = role === 'admin'   ? 'block' : 'none';
+    document.getElementById('fieldDoctorId').style.display = role === 'doctor'  ? 'block' : 'none';
+
+    document.getElementById('loginCid').disabled      = role !== 'patient';
+    document.getElementById('loginEmail').disabled    = role !== 'admin';
+    document.getElementById('loginDoctorId').disabled = role !== 'doctor';
+
+    const indicator = document.getElementById('roleIndicator');
+    if (role) {
+      const labels = { patient: '👤 Logging in as Patient', doctor: '🩺 Logging in as Doctor', admin: '🔐 Logging in as Admin' };
+      indicator.textContent = labels[role] || '';
+      indicator.className = 'role-indicator ' + role;
+      indicator.style.display = 'flex';
+    } else {
+      indicator.style.display = 'none';
+    }
+}
+ 
+  // ── PAGE NAVIGATION ──────────────────────────────────────────────
+  function showPage(pageId) {
+    const current = document.querySelector('.page-section.active');
+    const next    = document.getElementById(pageId);
+    if (current === next) return;
+    if (current) {
+      current.classList.add('exit');
+      setTimeout(() => current.classList.remove('active', 'exit'), 280);
+    }
+    setTimeout(() => { next.classList.add('active'); }, current ? 120 : 0);
+  }
+  function goToLogin(e)          { e.preventDefault(); showPage('loginPage'); }
+  function goToRegister(e)       { e.preventDefault(); showPage('registerPage'); }
+  function goToForgotPassword(e) { e.preventDefault(); showPage('forgotPasswordPage'); }
+  function goToHome(e)           { e.preventDefault(); }
+ 
+  // ── RIPPLE ───────────────────────────────────────────────────────
+  function addRipple(e) {
+    const btn = e.currentTarget;
+    const circle = document.createElement('span');
+    const d = Math.max(btn.clientWidth, btn.clientHeight);
+    const rect = btn.getBoundingClientRect();
+    circle.style.cssText = `width:${d}px;height:${d}px;left:${e.clientX - rect.left - d / 2}px;top:${e.clientY - rect.top - d / 2}px;`;
+    circle.classList.add('ripple');
+    btn.querySelector('.ripple')?.remove();
+    btn.appendChild(circle);
+  }
+ 
+  // ── LOADING STATE ─────────────────────────────────────────────────
+  function setLoading(btn, on) {
+    if (on) {
+      btn.dataset.orig = btn.innerHTML;
+      btn.innerHTML = '<div class="btn-spinner"></div> Please wait...';
+      btn.disabled = true;
+      btn.style.opacity = '0.85';
+    } else {
+      btn.innerHTML = btn.dataset.orig || btn.innerHTML;
+      btn.disabled = false;
+      btn.style.opacity = '1';
+    }
+  }
+ 
+  function showSuccessAndRedirect(btn, msg, url) {
+    btn.innerHTML = `<i class="fas fa-check-circle"></i> ${msg}`;
+    btn.style.background = 'linear-gradient(135deg,#10b981,#34d399)';
+    btn.style.boxShadow  = '0 8px 25px rgba(16,185,129,0.4)';
+    setTimeout(() => window.location.href = url, 1500);
+  }
+ 
+  function shakeForm(id) {
+    const f = document.getElementById(id);
+    f.classList.remove('shake');
+    void f.offsetWidth;
+    f.classList.add('shake');
+  }
+ 
+  // ── LOGIN ─────────────────────────────────────────────────────────
+  async function handleLogin(e) {
+    e.preventDefault();
+    const role     = document.getElementById('loginRole').value;
+    const password = document.getElementById('loginPassword').value;
+    const btn      = e.target.querySelector('.btn-primary');
+ 
+    if (!role)     { alert('Please select your role.'); return; }
+    if (!password) { shakeForm('loginForm'); return; }
+ 
+    let endpoint = '';
+    let body     = { password };
+ 
+    if (role === 'patient') {
+      const cid = document.getElementById('loginCid').value.trim();
+      if (!cid) { alert('Please enter your CID number.'); return; }
+      endpoint  = '/user/login';
+      body.cid  = cid;
+    } else if (role === 'admin') {
+      const email = document.getElementById('loginEmail').value.trim();
+      if (!email) { alert('Please enter your email.'); return; }
+      endpoint   = '/admin/login';
+      body.email = email;
+    } else if (role === 'doctor') {
+      const doctorId = parseInt(document.getElementById('loginDoctorId').value);
+      if (!doctorId) { alert('Please enter your Doctor ID.'); return; }
+      endpoint        = '/doctor/login';
+      body.doctorId   = doctorId;
+    }
+ 
+    setLoading(btn, true);
+ 
+    try {
+      const res = await fetch(endpoint, {
+        method:  'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body:    JSON.stringify(body)
+      });
+ 
+      const data = await res.json();
+ 
+      if (!res.ok) {
+        setLoading(btn, false);
+        alert(data.error || 'Login failed. Please check your credentials.');
+        shakeForm('loginForm');
+        return;
+      }
+ 
+      // Store minimal info in sessionStorage (not auth — session cookie handles real auth)
+      sessionStorage.setItem('userRole', role);
+ 
+      let redirectUrl = 'index.html';
+      if (role === 'patient') {
+        sessionStorage.setItem('userCid',  data.cid  || body.cid);
+        sessionStorage.setItem('userName', data.name || '');
+        redirectUrl = 'index.html';
+      } else if (role === 'admin') {
+        sessionStorage.setItem('userName',  data.name    || 'Admin');
+        sessionStorage.setItem('adminId',   data.adminId || '');
+        redirectUrl = 'admin-dashboard.html';
+      } else if (role === 'doctor') {
+        sessionStorage.setItem('userName',      data.name     || 'Doctor');
+        sessionStorage.setItem('doctorId',      data.doctorId || '');
+        sessionStorage.setItem('doctorChamber', '');
+        redirectUrl = 'doctor-dashboard.html';
+      }
+ 
+      showSuccessAndRedirect(btn, '✓ Login successful! Redirecting…', redirectUrl);
+ 
+    } catch (err) {
+      setLoading(btn, false);
+      alert('Network error. Please check your connection and try again.');
+    }
+  }
+ 
+  // ── REGISTER (Patient only) ───────────────────────────────────────
+  async function handleRegister(e) {
+    e.preventDefault();
+    const name   = document.getElementById('registerName').value;
+    const cid    = document.getElementById('registerCid')?.value;
+    const phone  = document.getElementById('registerPhone').value;
+    const pass   = document.getElementById('registerPassword').value;
+    const conf   = document.getElementById('registerConfirmPassword').value;
+    const btn    = e.target.querySelector('.btn-primary');
+ 
+    if (!name || !cid || !phone || !pass || !conf) { shakeForm('registerForm'); return; }
+    if (pass !== conf)   { alert('Passwords do not match!'); return; }
+    if (pass.length < 6) { alert('Password must be at least 6 characters.'); return; }
+    if (cid.length !== 11) { alert('CID must be exactly 11 digits.'); return; }
+ 
+    setLoading(btn, true);
+ 
+    try {
+      const res = await fetch('/user/register', {
+        method:  'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body:    JSON.stringify({ name, cid, phone_no: phone, password: pass })
+      });
+ 
+      const data = await res.json();
+ 
+      if (!res.ok) {
+        setLoading(btn, false);
+        alert(data.error || 'Registration failed.');
+        return;
+      }
+ 
+      showSuccessAndRedirect(btn, '✓ Account created! Welcome!', 'login.html');
+    } catch (err) {
+      setLoading(btn, false);
+      alert('Network error. Please try again.');
+    }
+  }
+ 
+  // ── PASSWORD STRENGTH ────────────────────────────────────────────
+  function checkPasswordStrength() {
+    const val = document.getElementById('registerPassword').value;
+    document.getElementById('passwordStrengthBar').className = 'password-strength-bar' +
+      (val.length < 6 ? ' weak' : val.length < 10 ? ' medium' : ' strong');
+  }
+ 
+  // ── FORGOT PASSWORD (UI only — no backend endpoint yet) ──────────
+  function handleForgotPassword(e) {
+    e.preventDefault();
+    const btn = e.target.querySelector('.btn-primary');
+    setLoading(btn, true);
+    setTimeout(() => {
+      setLoading(btn, false);
+      const s1 = document.getElementById('forgotStep1');
+      const s2 = document.getElementById('forgotStep2');
+      s1.style.transition = 'opacity 0.3s,transform 0.3s';
+      s1.style.opacity = '0'; s1.style.transform = 'translateY(-10px)';
+      setTimeout(() => {
+        s1.style.display = 'none'; s2.style.display = 'block';
+        s2.style.opacity = '0'; s2.style.transform = 'translateY(10px)';
+        s2.style.transition = 'opacity 0.35s,transform 0.35s';
+        requestAnimationFrame(() => { s2.style.opacity = '1'; s2.style.transform = 'translateY(0)'; });
+      }, 300);
+    }, 1000);
+  }
+ 
+  function handleResetPassword(e) {
+    e.preventDefault();
+    alert('Password reset is not yet connected to the backend.');
+  }
+</script>
+  </body>
+</html>

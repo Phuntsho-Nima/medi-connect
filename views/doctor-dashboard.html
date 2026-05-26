@@ -1,0 +1,644 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MediConnect | Doctor Dashboard</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+    <link rel="stylesheet" href="css/base.css" />
+    <link rel="stylesheet" href="css/doctor.css" />
+    <link rel="stylesheet" href="css/dashboard.css" />
+    <link rel="stylesheet" href="css/mobile.css" />
+  </head>
+  <body>
+    <!-- ── TOP NAV ── -->
+    <nav class="top-nav">
+      <div class="logo" onclick="window.location.href = 'index.html'">
+        MediConnect
+      </div>
+      <ul class="desktop-nav-links">
+        <li class="active" onclick="showPage('dashboard', this)">
+          <i class="fas fa-th-large"></i> <span>Dashboard</span>
+        </li>
+        <li onclick="showPage('patients', this)">
+          <i class="fas fa-users"></i> <span>My Patients</span>
+        </li>
+        <li onclick="showPage('schedule', this)">
+          <i class="fas fa-calendar-alt"></i> <span>Schedule</span>
+        </li>
+        <li onclick="showPage('prescriptions', this)">
+          <i class="fas fa-prescription-bottle-alt"></i>
+          <span>Prescriptions</span>
+        </li>
+        <li onclick="showPage('profile', this)">
+          <i class="fas fa-user-md"></i> <span>Profile</span>
+        </li>
+        <li onclick="confirmLogout()">
+          <i class="fas fa-sign-out-alt"></i> <span>Logout</span>
+        </li>
+      </ul>
+    </nav>
+
+    <!-- ── MOBILE HEADER ── -->
+    <header class="mobile-header">
+      <div class="mobile-logo" onclick="window.location.href = 'index.html'">
+        MediConnect
+      </div>
+      <span class="mobile-page-title" id="mobilePageTitle">Dashboard</span>
+      <button class="header-logout-btn" onclick="confirmLogout()">
+        <i class="fas fa-sign-out-alt"></i>
+      </button>
+    </header>
+
+    <!-- ── BOTTOM NAV ── -->
+    <nav class="bottom-nav">
+      <ul>
+        <li
+          class="active"
+          id="bnav-dashboard"
+          onclick="showPage('dashboard', null, 'Home')"
+        >
+          <i class="fas fa-home"></i> Home
+        </li>
+        <li
+          id="bnav-patients"
+          onclick="showPage('patients', null, 'My Patients')"
+        >
+          <i class="fas fa-users"></i> Patients
+        </li>
+        <li id="bnav-schedule" onclick="showPage('schedule', null, 'Schedule')">
+          <i class="fas fa-calendar-alt"></i> Schedule
+        </li>
+        <li
+          id="bnav-prescriptions"
+          onclick="showPage('prescriptions', null, 'Prescriptions')"
+        >
+          <i class="fas fa-prescription-bottle-alt"></i> Rx
+        </li>
+        <li id="bnav-profile" onclick="showPage('profile', null, 'Profile')">
+          <i class="fas fa-user-md"></i> Profile
+        </li>
+      </ul>
+    </nav>
+
+    <div class="nav-hint" id="navHint">
+      <i class="fas fa-hand-point-down" style="margin-right: 6px"></i> Tap icons
+      below to navigate
+    </div>
+
+    <!-- ── LOGOUT MODAL ── -->
+    <div class="logout-overlay" id="logoutOverlay">
+      <div class="logout-modal">
+        <div class="modal-icon"><i class="fas fa-sign-out-alt"></i></div>
+        <h3>Log Out?</h3>
+        <p>You'll be signed out of your MediConnect session.</p>
+        <div class="modal-actions">
+          <button class="btn-cancel" onclick="closeLogout()">Cancel</button>
+          <button class="btn-logout-confirm" onclick="doLogout()">
+            Log Out
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <main class="main-content">
+      <!-- ══ DASHBOARD ══ -->
+      <section id="dashboard" class="page-section active">
+        <h1>Dashboard</h1>
+
+        <div class="welcome-section welcome-desktop">
+          <h2>Good morning, Dr. Karma Wangchuk!</h2>
+          <p>
+            <i class="fas fa-calendar-alt"></i> You have
+            <strong>8 patients</strong> scheduled for today.
+          </p>
+          <p>
+            <i class="fas fa-clock"></i> Next: Dorji Wangchuk at 10:00 AM —
+            Chamber CH-02
+          </p>
+        </div>
+        <div
+          class="welcome-section welcome-mobile"
+          style="padding: 20px 20px 20px 26px"
+        >
+          <h2 style="font-size: 1.3rem; margin-bottom: 6px">
+            Good morning, Dr. Karma 👋
+          </h2>
+          <p style="font-size: 0.88rem; margin: 0">
+            <i class="fas fa-calendar-alt"></i> 8 patients today
+          </p>
+        </div>
+
+        <div class="quick-actions">
+          <button
+            class="quick-action-btn"
+            onclick="showPage('patients', null, 'My Patients')"
+          >
+            <i class="fas fa-users"></i> View Patients
+          </button>
+          <button
+            class="quick-action-btn"
+            onclick="showPage('prescriptions', null, 'Prescriptions')"
+          >
+            <i class="fas fa-prescription-bottle-alt"></i> Write Rx
+          </button>
+        </div>
+
+        <div class="stats-grid-4">
+          <div class="stat-card teal">
+            <div class="stat-icon"><i class="fas fa-users"></i></div>
+            <div class="stat-content">
+              <h4>8</h4>
+              <p>Today's Patients</p>
+            </div>
+          </div>
+          <div class="stat-card green">
+            <div class="stat-icon"><i class="fas fa-check-circle"></i></div>
+            <div class="stat-content">
+              <h4>3</h4>
+              <p>Seen Today</p>
+            </div>
+          </div>
+          <div class="stat-card blue">
+            <div class="stat-icon"><i class="fas fa-clock"></i></div>
+            <div class="stat-content">
+              <h4>5</h4>
+              <p>Waiting</p>
+            </div>
+          </div>
+          <div class="stat-card amber">
+            <div class="stat-icon">
+              <i class="fas fa-prescription-bottle-alt"></i>
+            </div>
+            <div class="stat-content">
+              <h4>12</h4>
+              <p>Prescriptions</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Today's queue -->
+        <div class="card">
+          <h3>
+            <i
+              class="fas fa-list-ul"
+              style="color: var(--role-color); margin-right: 8px"
+            ></i
+            >Today's Patient Queue
+          </h3>
+
+          <div class="desktop-table">
+            <table>
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Patient</th>
+                  <th>CID No.</th>
+                  <th>Time</th>
+                  <th>Department</th>
+                  <th>Status</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr id="prow-1">
+                  <td>1</td>
+                  <td>Dorji Wangchuk</td>
+                  <td>11410001234</td>
+                  <td>10:00 AM</td>
+                  <td>OPD</td>
+                  <td><span class="badge status-seen">Seen</span></td>
+                  <td>
+                    <button class="btn-small btn-view" onclick="viewPatient(1)">
+                      View
+                    </button>
+                    <button class="btn-small btn-done" disabled>Done</button>
+                  </td>
+                </tr>
+                <tr id="prow-2">
+                  <td>2</td>
+                  <td>Pema Seldon</td>
+                  <td>11410005678</td>
+                  <td>10:30 AM</td>
+                  <td>Cardiology</td>
+                  <td><span class="badge status-waiting">Waiting</span></td>
+                  <td>
+                    <button class="btn-small btn-view" onclick="viewPatient(2)">
+                      View
+                    </button>
+                    <button class="btn-small btn-done" onclick="markSeen(2)">
+                      Mark Seen
+                    </button>
+                  </td>
+                </tr>
+                <tr id="prow-3">
+                  <td>3</td>
+                  <td>Tshering Namgay</td>
+                  <td>11410009012</td>
+                  <td>11:00 AM</td>
+                  <td>General Surgery</td>
+                  <td><span class="badge status-urgent">Urgent</span></td>
+                  <td>
+                    <button class="btn-small btn-view" onclick="viewPatient(3)">
+                      View
+                    </button>
+                    <button class="btn-small btn-done" onclick="markSeen(3)">
+                      Mark Seen
+                    </button>
+                  </td>
+                </tr>
+                <tr id="prow-4">
+                  <td>4</td>
+                  <td>Kinley Zangmo</td>
+                  <td>11410003456</td>
+                  <td>11:30 AM</td>
+                  <td>Pediatrics</td>
+                  <td><span class="badge status-waiting">Waiting</span></td>
+                  <td>
+                    <button class="btn-small btn-view" onclick="viewPatient(4)">
+                      View
+                    </button>
+                    <button class="btn-small btn-done" onclick="markSeen(4)">
+                      Mark Seen
+                    </button>
+                  </td>
+                </tr>
+                <tr id="prow-5">
+                  <td>5</td>
+                  <td>Ugyen Phuntsho</td>
+                  <td>11410007890</td>
+                  <td>12:00 PM</td>
+                  <td>OPD</td>
+                  <td><span class="badge status-waiting">Waiting</span></td>
+                  <td>
+                    <button class="btn-small btn-view" onclick="viewPatient(5)">
+                      View
+                    </button>
+                    <button class="btn-small btn-done" onclick="markSeen(5)">
+                      Mark Seen
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="mobile-card-list" style="display: none">
+            <div class="note-card">
+              <div class="note-card-header">
+                <strong>Dorji Wangchuk</strong
+                ><span class="badge status-seen">Seen</span>
+              </div>
+              <p>10:00 AM · OPD · CID 11410001234</p>
+            </div>
+            <div class="note-card">
+              <div class="note-card-header">
+                <strong>Pema Seldon</strong
+                ><span class="badge status-waiting">Waiting</span>
+              </div>
+              <p>10:30 AM · Cardiology · CID 11410005678</p>
+            </div>
+            <div class="note-card">
+              <div class="note-card-header">
+                <strong>Tshering Namgay</strong
+                ><span class="badge status-urgent">Urgent</span>
+              </div>
+              <p>11:00 AM · General Surgery · CID 11410009012</p>
+            </div>
+            <div class="note-card">
+              <div class="note-card-header">
+                <strong>Kinley Zangmo</strong
+                ><span class="badge status-waiting">Waiting</span>
+              </div>
+              <p>11:30 AM · Pediatrics · CID 11410003456</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Recent activity -->
+        <div class="card">
+          <h3>
+            <i
+              class="fas fa-history"
+              style="color: var(--accent); margin-right: 8px"
+            ></i
+            >Recent Activity
+          </h3>
+          <div class="desktop-activity">
+            <div class="activity-card">
+              <strong>Prescription Issued</strong>
+              <p
+                style="
+                  color: var(--text-muted);
+                  font-size: 0.9rem;
+                  margin: 5px 0 0;
+                "
+              >
+                Dorji Wangchuk — Paracetamol 500mg · Today 09:45 AM
+              </p>
+            </div>
+            <div class="activity-card">
+              <strong>Patient Record Updated</strong>
+              <p
+                style="
+                  color: var(--text-muted);
+                  font-size: 0.9rem;
+                  margin: 5px 0 0;
+                "
+              >
+                Pema Seldon — Blood pressure notes added · Yesterday
+              </p>
+            </div>
+            <div class="activity-card">
+              <strong>Appointment Completed</strong>
+              <p
+                style="
+                  color: var(--text-muted);
+                  font-size: 0.9rem;
+                  margin: 5px 0 0;
+                "
+              >
+                Tshering Namgay — Post-op follow-up · Yesterday
+              </p>
+            </div>
+          </div>
+          <div class="mobile-activity" style="display: none">
+            <div class="activity-pill">
+              <div
+                class="pill-icon"
+                style="background: #ccfbf1; color: #0d9488"
+              >
+                <i class="fas fa-prescription-bottle-alt"></i>
+              </div>
+              <div class="pill-text">
+                <strong>Prescription Issued</strong
+                ><span>Dorji · Paracetamol 500mg</span>
+              </div>
+            </div>
+            <div class="activity-pill">
+              <div class="pill-icon green">
+                <i class="fas fa-file-medical"></i>
+              </div>
+              <div class="pill-text">
+                <strong>Record Updated</strong><span>Pema Seldon</span>
+              </div>
+            </div>
+            <div class="activity-pill">
+              <div class="pill-icon blue">
+                <i class="fas fa-check-circle"></i>
+              </div>
+              <div class="pill-text">
+                <strong>Appointment Done</strong><span>Tshering Namgay</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ══ MY PATIENTS ══ -->
+      <section id="patients" class="page-section">
+        <h1>My Patients</h1>
+        <div class="card">
+          <h3>Patient List</h3>
+          <div class="desktop-table">
+            <table>
+              <thead>
+                <tr>
+                  <th>CID No.</th>
+                  <th>Name</th>
+                  <th>Age</th>
+                  <th>Department</th>
+                  <th>Last Visit</th>
+                  <th>Condition</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>11410001234</td>
+                  <td>Dorji Wangchuk</td>
+                  <td>34</td>
+                  <td>OPD</td>
+                  <td>2026-04-30</td>
+                  <td>Common Cold</td>
+                  <td>
+                    <button class="btn-small btn-view" onclick="viewPatient(1)">
+                      View Notes
+                    </button>
+                  </td>
+                </tr>
+                <tr>
+                  <td>11410005678</td>
+                  <td>Pema Seldon</td>
+                  <td>52</td>
+                  <td>Cardiology</td>
+                  <td>2026-04-28</td>
+                  <td>Hypertension</td>
+                  <td>
+                    <button class="btn-small btn-view" onclick="viewPatient(2)">
+                      View Notes
+                    </button>
+                  </td>
+                </tr>
+                <tr>
+                  <td>11410009012</td>
+                  <td>Tshering Namgay</td>
+                  <td>41</td>
+                  <td>General Surgery</td>
+                  <td>2026-04-27</td>
+                  <td>Post-op follow-up</td>
+                  <td>
+                    <button class="btn-small btn-view" onclick="viewPatient(3)">
+                      View Notes
+                    </button>
+                  </td>
+                </tr>
+                <tr>
+                  <td>11410003456</td>
+                  <td>Kinley Zangmo</td>
+                  <td>7</td>
+                  <td>Pediatrics</td>
+                  <td>2026-04-26</td>
+                  <td>Fever</td>
+                  <td>
+                    <button class="btn-small btn-view" onclick="viewPatient(4)">
+                      View Notes
+                    </button>
+                  </td>
+                </tr>
+                <tr>
+                  <td>11410007890</td>
+                  <td>Ugyen Phuntsho</td>
+                  <td>29</td>
+                  <td>OPD</td>
+                  <td>2026-04-25</td>
+                  <td>Migraine</td>
+                  <td>
+                    <button class="btn-small btn-view" onclick="viewPatient(5)">
+                      View Notes
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="mobile-card-list" style="display: none">
+            <div class="note-card">
+              <div class="note-card-header">
+                <strong>Dorji Wangchuk</strong
+                ><span class="badge status-on">OPD</span>
+              </div>
+              <p>Age 34 · CID 11410001234 · Common Cold</p>
+            </div>
+            <div class="note-card">
+              <div class="note-card-header">
+                <strong>Pema Seldon</strong
+                ><span class="badge status-on">Cardiology</span>
+              </div>
+              <p>Age 52 · CID 11410005678 · Hypertension</p>
+            </div>
+            <div class="note-card">
+              <div class="note-card-header">
+                <strong>Tshering Namgay</strong
+                ><span class="badge status-urgent">Surgery</span>
+              </div>
+              <p>Age 41 · CID 11410009012 · Post-op</p>
+            </div>
+            <div class="note-card">
+              <div class="note-card-header">
+                <strong>Kinley Zangmo</strong
+                ><span class="badge status-waiting">Pediatrics</span>
+              </div>
+              <p>Age 7 · CID 11410003456 · Fever</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ══ SCHEDULE ══ -->
+      <section id="schedule" class="page-section">
+        <h1>My Schedule</h1>
+        <div class="card">
+          <h3>Today — Loading...</h3>
+          <div id="scheduleContainer">
+            <p style="color:var(--text-muted)">Loading schedule...</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ══ PRESCRIPTIONS ══ -->
+      <section id="prescriptions" class="page-section">
+        <h1>Prescriptions</h1>
+        <div class="card">
+          <h3>Write New Prescription</h3>
+          <form id="prescriptionForm" style="margin-top: 16px">
+            <div class="form-grid">
+              <div class="form-group">
+                <label>Patient Name</label
+                ><input
+                  type="text"
+                  id="rxPatientName"
+                  placeholder="Patient full name"
+                  required
+                />
+              </div>
+              <div class="form-group">
+                <label>Patient CID No.</label
+                ><input
+                  type="text"
+                  id="rxCidNo"
+                  placeholder="e.g. 11410001234"
+                  required
+                />
+              </div>
+              <div class="form-group">
+                <label>Drug / Medication</label
+                ><input
+                  type="text"
+                  id="rxDrug"
+                  placeholder="e.g. Paracetamol"
+                  required
+                />
+              </div>
+              <div class="form-group">
+                <label>Dosage</label
+                ><input
+                  type="text"
+                  id="rxDosage"
+                  placeholder="e.g. 500mg twice daily"
+                  required
+                />
+              </div>
+              <div class="form-group" style="grid-column: 1/-1">
+                <label>Notes / Instructions</label
+                ><input
+                  type="text"
+                  id="rxNotes"
+                  placeholder="e.g. Take after meals, avoid alcohol"
+                />
+              </div>
+            </div>
+            <button type="submit" class="btn-primary" style="margin-top: 20px">
+              <i
+                class="fas fa-prescription-bottle-alt"
+                style="margin-right: 8px"
+              ></i
+              >Issue Prescription
+            </button>
+          </form>
+        </div>
+        <div class="card">
+          <h3>Recently Issued</h3>
+          <div class="rx-list" id="rxList">
+            <div class="rx-pill">
+              <i class="fas fa-prescription-bottle-alt"></i>Dorji Wangchuk —
+              Paracetamol 500mg twice daily
+            </div>
+            <div class="rx-pill">
+              <i class="fas fa-prescription-bottle-alt"></i>Pema Seldon —
+              Amlodipine 5mg once daily
+            </div>
+            <div class="rx-pill">
+              <i class="fas fa-prescription-bottle-alt"></i>Kinley Zangmo —
+              Amoxicillin 250mg three times daily
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ══ PROFILE ══ -->
+      <section id="profile" class="page-section">
+          <h1>My Profile</h1>
+          <div class="card">
+            <div class="form-grid">
+              <div class="form-group">
+                <label>Full Name</label>
+                <input type="text" id="profileName" placeholder="Full name" />
+              </div>
+              <div class="form-group">
+                <label>Department</label>
+                <input type="text" id="profileDept" placeholder="Department" readonly />
+              </div>
+              <div class="form-group">
+                <label>Specialization</label>
+                <input type="text" id="profileSpec" placeholder="Specialization" />
+              </div>
+              <div class="form-group">
+                <label>Phone</label>
+                <input type="text" id="profilePhone" placeholder="Phone" />
+              </div>
+              <div class="form-group">
+                <label>Email</label>
+                <input type="email" id="profileEmail" placeholder="Email" />
+              </div>
+            </div>
+            <br /><button class="btn-primary">Save Changes</button>
+          </div>
+      </section>
+    </main>
+    <script src="js/doctor.js?v=2"></script>
+  </body>
+</html>

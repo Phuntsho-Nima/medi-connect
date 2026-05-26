@@ -1,0 +1,132 @@
+/* Dashboard Specific Styles */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 24px;
+  margin-bottom: 32px;
+}
+
+.stat-card {
+  background: var(--white);
+  padding: 32px;
+  border-radius: 16px;
+  border: 1px solid var(--white);
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  cursor: pointer;
+  box-shadow: var(--shadow-md);
+  text-decoration: none;
+}
+
+.stat-card.blue {
+  background: var(--primary-gradient);
+  color: var(--white);
+}
+
+.stat-card.blue:hover {
+  background: linear-gradient(135deg, #1e40af, #1e3a8a);
+}
+
+.stat-card.blue .stat-icon {
+  background: rgba(255, 255, 255, 0.2);
+  color: var(--white);
+}
+
+.stat-card.blue .stat-content h4,
+.stat-card.blue .stat-content p {
+  color: var(--white);
+}
+
+.stat-card.green {
+  background: linear-gradient(135deg, #ffffff, #f0f9ff);
+}
+
+.stat-card.green:hover {
+  border-color: #bae6fd;
+}
+
+.stat-card .stat-icon { 
+  font-size: 2rem; 
+  color: var(--primary);
+  width: 64px;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #eff6ff; 
+  border-radius: 12px;
+}
+
+.stat-content h4 { 
+  font-size: 2rem; 
+  margin: 0 0 4px 0; 
+  color: var(--text-main);
+  font-weight: 800;
+}
+
+.stat-content p { 
+  margin: 0; 
+  color: var(--text-muted); 
+  font-size: 1rem; 
+  font-weight: 500;
+}
+
+.welcome-section {
+  background: var(--white);
+  padding: 40px;
+  border-radius: 16px;
+  margin-bottom: 32px;
+  border: 1px solid var(--white);
+  position: relative;
+  overflow: hidden;
+  box-shadow: var(--shadow-md);
+}
+
+.welcome-section::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; bottom: 0;
+  width: 6px;
+  background: var(--primary-gradient);
+}
+
+.welcome-section h2 {
+  margin: 0 0 16px 0;
+  font-size: 1.8rem;
+}
+
+.welcome-section p {
+  margin: 8px 0;
+  color: var(--text-muted);
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+.welcome-section i {
+  width: 24px;
+  color: var(--accent);
+}
+
+.activity-card {
+  padding: 20px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.activity-card:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.activity-card strong { 
+  color: var(--text-main); 
+  font-weight: 600; 
+  display: block;
+  margin-bottom: 6px;
+  font-size: 1.05rem;
+}
+
+@media (max-width: 750px) {
+  .stats-grid { grid-template-columns: 1fr; gap: 16px; }
+  .welcome-section { padding: 24px; }
+}

@@ -1,0 +1,445 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MediConnect | Patient Portal</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+    <link rel="stylesheet" href="css/base.css" />
+    <link rel="stylesheet" href="css/dashboard.css" />
+    <link rel="stylesheet" href="css/mobile.css" />
+  </head>
+  <body>
+    <!-- ── TOP NAV (Desktop only) ── -->
+    <nav class="top-nav">
+      <div class="logo" onclick="window.location.href = 'index.html'">
+        MediConnect
+      </div>
+      <ul class="desktop-nav-links">
+        <li class="active" onclick="showPage('dashboard', this)">
+          <i class="fas fa-th-large"></i> <span>Dashboard</span>
+        </li>
+        <li onclick="showPage('appointments', this)">
+          <i class="fas fa-calendar-check"></i> <span>Appointments</span>
+        </li>
+        <li onclick="showPage('records', this)">
+          <i class="fas fa-file-medical"></i> <span>Records</span>
+        </li>
+        <li onclick="showPage('profile', this)">
+          <i class="fas fa-user-circle"></i> <span>Profile</span>
+        </li>
+        <li onclick="confirmLogout()">
+          <i class="fas fa-sign-out-alt"></i> <span>Logout</span>
+        </li>
+      </ul>
+    </nav>
+
+    <!-- ── MOBILE HEADER ── -->
+    <header class="mobile-header">
+      <div class="mobile-logo" onclick="window.location.href = 'index.html'">
+        MediConnect
+      </div>
+      <span class="mobile-page-title" id="mobilePageTitle">Dashboard</span>
+      <button
+        class="header-logout-btn"
+        onclick="confirmLogout()"
+        title="Logout"
+      >
+        <i class="fas fa-sign-out-alt"></i>
+      </button>
+    </header>
+
+    <!-- ── BOTTOM NAV (Mobile only) ── -->
+    <nav class="bottom-nav">
+      <ul>
+        <li
+          class="active"
+          id="bnav-dashboard"
+          onclick="showPage('dashboard', null, 'Home')"
+        >
+          <i class="fas fa-home"></i>
+          Home
+        </li>
+        <li
+          id="bnav-appointments"
+          onclick="showPage('appointments', null, 'Appointments')"
+        >
+          <i class="fas fa-calendar-check"></i>
+          Book
+        </li>
+        <li id="bnav-records" onclick="showPage('records', null, 'Records')">
+          <i class="fas fa-file-medical"></i>
+          Records
+        </li>
+        <li id="bnav-profile" onclick="showPage('profile', null, 'Profile')">
+          <i class="fas fa-user-circle"></i>
+          Profile
+        </li>
+      </ul>
+    </nav>
+
+    <!-- ── NAV HINT (first-time tooltip) ── -->
+    <div class="nav-hint" id="navHint">
+      <i class="fas fa-hand-point-down" style="margin-right: 6px"></i> Tap icons
+      below to navigate
+    </div>
+
+    <!-- ── LOGOUT MODAL ── -->
+    <div class="logout-overlay" id="logoutOverlay">
+      <div class="logout-modal">
+        <div class="modal-icon"><i class="fas fa-sign-out-alt"></i></div>
+        <h3>Log Out?</h3>
+        <p>You'll be signed out of your MediConnect account.</p>
+        <div class="modal-actions">
+          <button class="btn-cancel" onclick="closeLogout()">Cancel</button>
+          <button class="btn-logout-confirm" onclick="doLogout()">
+            Log Out
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── MAIN CONTENT ── -->
+    <main class="main-content">
+      <!-- DASHBOARD -->
+      <section id="dashboard" class="page-section active">
+        <h1>Dashboard</h1>
+
+        <!-- Desktop welcome -->
+        <div class="welcome-section welcome-desktop">
+          <h2>Welcome back!</h2>
+          <p>
+            <i class="fas fa-calendar-check"></i> 2 appointments scheduled for
+            today.
+          </p>
+          <p>
+            <i class="fas fa-heart"></i> Your health is our priority. Keep up
+            with your appointments!
+          </p>
+        </div>
+
+        <!-- Mobile welcome (short) -->
+        <div
+          class="welcome-section welcome-mobile"
+          style="padding: 20px 20px 20px 26px"
+        >
+          <h2 style="font-size: 1.3rem; margin-bottom: 6px">Hi</h2>
+          <p style="font-size: 0.88rem; margin: 0">
+            <i class="fas fa-calendar-check"></i> 2 appointments today
+          </p>
+        </div>
+
+        <!-- Mobile quick actions -->
+        <div class="quick-actions">
+          <button
+            class="quick-action-btn"
+            onclick="showPage('appointments', null, 'Appointments')"
+          >
+            <i class="fas fa-plus-circle"></i>
+            Book Appointment
+          </button>
+          <button
+            class="quick-action-btn"
+            onclick="showPage('records', null, 'Records')"
+          >
+            <i class="fas fa-file-medical"></i>
+            My Records
+          </button>
+        </div>
+
+        <div class="stats-grid">
+          <div
+            class="stat-card blue"
+            onclick="showPage('appointments', null, 'Appointments')"
+          >
+            <div class="stat-icon"><i class="fas fa-calendar-check"></i></div>
+            <div class="stat-content">
+              <h4>2</h4>
+              <p>Upcoming Appointments</p>
+            </div>
+          </div>
+          <div
+            class="stat-card green"
+            onclick="showPage('records', null, 'Records')"
+          >
+            <div class="stat-icon"><i class="fas fa-file-medical"></i></div>
+            <div class="stat-content">
+              <h4>5</h4>
+              <p>Medical Records</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>
+            <i
+              class="fas fa-history"
+              style="color: var(--accent); margin-right: 8px"
+            ></i
+            >Recent Activity
+          </h3>
+
+          <!-- Desktop activity -->
+          <div class="desktop-activity">
+            <div class="activity-card">
+              <strong>Appointment Confirmed</strong>
+              <p
+                style="
+                  color: var(--text-muted);
+                  font-size: 0.9rem;
+                  margin: 5px 0 0 0;
+                "
+              >
+                Dr. Karma Wangchuk · 2026-04-22 at 10:00 AM
+              </p>
+            </div>
+            <div class="activity-card">
+              <strong>Medical Record Updated</strong>
+              <p
+                style="
+                  color: var(--text-muted);
+                  font-size: 0.9rem;
+                  margin: 5px 0 0 0;
+                "
+              >
+                Latest diagnosis added to your records
+              </p>
+            </div>
+            <div class="activity-card">
+              <strong>Prescription Issued</strong>
+              <p
+                style="
+                  color: var(--text-muted);
+                  font-size: 0.9rem;
+                  margin: 5px 0 0 0;
+                "
+              >
+                Paracetamol 500mg · Valid until 2026-05-22
+              </p>
+            </div>
+          </div>
+
+          <!-- Mobile activity (compact pills) -->
+          <div class="mobile-activity" style="display: none">
+            <div class="activity-pill">
+              <div class="pill-icon blue">
+                <i class="fas fa-calendar-check"></i>
+              </div>
+              <div class="pill-text">
+                <strong>Appointment Confirmed</strong>
+                <span>Dr. Karma · Apr 22, 10:00 AM</span>
+              </div>
+            </div>
+            <div class="activity-pill">
+              <div class="pill-icon green">
+                <i class="fas fa-file-medical"></i>
+              </div>
+              <div class="pill-text">
+                <strong>Record Updated</strong>
+                <span>New diagnosis added</span>
+              </div>
+            </div>
+            <div class="activity-pill">
+              <div class="pill-icon orange">
+                <i class="fas fa-prescription-bottle-alt"></i>
+              </div>
+              <div class="pill-text">
+                <strong>Prescription Issued</strong>
+                <span>Paracetamol 500mg</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- APPOINTMENTS -->
+      <section id="appointments" class="page-section">
+        <h1>Appointments</h1>
+        <div class="card">
+          <h3>Book New Appointment</h3>
+          <form id="appointmentForm" style="margin-top: 16px">
+            <div class="form-grid">
+              <div class="form-group">
+                <label>Patient Name</label>
+                <input
+                  type="text"
+                  id="patientName"
+                  placeholder="Your name"
+                  required
+                />
+              </div>
+              <div class="form-group">
+                <label>Date</label>
+                <input type="date" id="appointmentDate" required />
+              </div>
+             <div class="form-group">
+              <label>Time Slot</label>
+              <select id="appointmentTime" required>
+                <option value="">Select a time slot</option>
+                <option value="09:00">9:00 – 9:15 AM</option>
+                <option value="09:15">9:15 – 9:30 AM</option>
+                <option value="09:30">9:30 – 9:45 AM</option>
+                <option value="09:45">9:45 – 10:00 AM</option>
+                <option value="10:00">10:00 – 10:15 AM</option>
+                <option value="10:15">10:15 – 10:30 AM</option>
+                <option value="10:30">10:30 – 10:45 AM</option>
+                <option value="11:00">11:00 – 11:15 AM</option>
+                <option value="11:30">11:30 – 11:45 AM</option>
+                <option value="11:45">11:45 AM – 12:00 PM</option>
+                <option value="12:00">12:00 – 12:15 PM</option>
+                <option value="12:15">12:15 – 12:30 PM</option>
+                <option value="12:30">12:30 – 12:45 PM</option>
+                <option value="12:45">12:45 – 1:00 PM</option>
+                <option value="14:00">2:00 – 2:15 PM</option>
+                <option value="14:15">2:15 – 2:30 PM</option>
+                <option value="14:30">2:30 – 2:45 PM</option>
+                <option value="14:45">2:45 – 3:00 PM</option>
+              </select>
+            </div>
+              <div class="form-group">
+                <label>CID No.</label>
+                <input
+                  type="text"
+                  id="cidNo"
+                  placeholder="e.g. 11410001234"
+                  required
+                />
+              </div>
+              <div class="form-group">
+                <label>Chamber</label>
+                <select id="chamberNo" required>
+                  <option value="">Select Chamber</option>
+              </select>
+            </div>
+            </div>
+            <button type="submit" class="btn-primary" style="margin-top: 20px">
+              <i class="fas fa-plus" style="margin-right: 8px"></i>Book
+              Appointment
+            </button>
+          </form>
+        </div>
+
+        <div class="card">
+          <h3>Upcoming Schedule</h3>
+
+          <!-- Desktop table -->
+          <div class="desktop-table">
+            <table>
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Patient</th>
+                  <th>Date</th>
+                  <th>Time</th>
+                  <th>CID No.</th>
+                  <th>Status</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="appointmentTableBody">
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Mobile appointment cards -->
+          <div
+            class="mobile-appt-list"
+            style="display: none"
+            id="mobileApptList"
+          >
+            <div class="appt-card">
+              <div class="appt-card-header">
+                <strong>Dorji Wangchuk</strong>
+                <span class="badge status-on">Scheduled</span>
+              </div>
+              <div class="appt-card-body">
+                <div class="appt-info-item">
+                  <span class="info-label">Date</span>
+                  <span class="info-value">2026-04-22</span>
+                </div>
+                <div class="appt-info-item">
+                  <span class="info-label">Time</span>
+                  <span class="info-value">10:00 AM</span>
+                </div>
+                <div class="appt-info-item">
+                  <span class="info-label">CID No.</span>
+                  <span class="info-value">11410001234</span>
+                </div>
+                <div class="appt-info-item">
+                  <span class="info-label">ID</span>
+                  <span class="info-value">#8821</span>
+                </div>
+              </div>
+              <button
+                class="btn-small"
+                style="width: 100%"
+                onclick="cancelAppointment(8821)"
+              >
+                <i class="fas fa-times" style="margin-right: 6px"></i>Cancel
+                Appointment
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- RECORDS -->
+      <section id="records" class="page-section">
+        <h1>Medical Records</h1>
+        <div class="card">
+          <h3>Your Records</h3>
+          <div id="recordsContainer" style="margin-top: 16px">
+            <p style="color:var(--text-muted)">Loading records...</p>
+          </div>
+        </div>
+      </section>
+      <!-- PROFILE -->
+      <section id="profile" class="page-section">
+        <h1>My Profile</h1>
+        <div class="card">
+          <form id="profileForm">
+            <div class="form-grid">
+              <div class="form-group">
+                <label>Full Name</label>
+                <input type="text" id="profileName" placeholder="Full name" />
+              </div>
+              <div class="form-group">
+                <label>CID</label>
+                <input type="text" id="profileCid" placeholder="CID" readonly />
+              </div>
+              <div class="form-group">
+                <label>Dzongkhag</label>
+                <input type="text" id="profileDzongkhag" placeholder="Dzongkhag" />
+              </div>
+              <div class="form-group">
+                <label>Phone</label>
+                <input type="text" id="profilePhone" placeholder="Phone" />
+              </div>
+              <div class="form-group">
+                <label>Gender</label>
+                <select id="profileGender">
+                  <option value="">Select</option>
+                  <option>Male</option>
+                  <option>Female</option>
+                  <option>Other</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Date of Birth</label>
+                <input type="date" id="profileDob" />
+              </div>
+            </div>
+            <br />
+            <button type="submit" class="btn-primary">Save Changes</button>
+          </form>
+        </div>
+      </section>
+    </main>
+
+    <script src="js/mobile-nav.js?v=2"></script>
+    <script src="js/main.js?v=2"></script>
+  </body>
+</html>

@@ -1,0 +1,9 @@
+{
+  "apt_id": 1,
+  "apt_date": "2026-05-14",
+  "apt_time": "10:30",
+  "chamber_no": "C-01",
+  "cid": 123456789,
+  "admin_id": 2,
+  "status": "active"
+}

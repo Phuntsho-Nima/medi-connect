@@ -1,0 +1,203 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MediConnect | Profile</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+    <link rel="stylesheet" href="css/base.css" />
+    <link rel="stylesheet" href="css/mobile.css" />
+  </head>
+  <body>
+    <nav class="sidebar">
+      <div class="logo" onclick="window.location.href = 'index.html'">
+        MediConnect
+      </div>
+      <button class="hamburger-btn" onclick="toggleMenu()">
+        <i class="fas fa-bars"></i>
+      </button>
+      <ul class="nav-menu drawer-init">
+        <li class="nav-link" onclick="window.location.href = 'index.html'">
+          <i class="fas fa-home"></i> <span>Dashboard</span>
+        </li>
+        <li
+          class="nav-link"
+          onclick="window.location.href = 'appointments.html'"
+        >
+          <i class="fas fa-calendar-check"></i> <span>Appointments</span>
+        </li>
+        <li class="nav-link" onclick="window.location.href = 'records.html'">
+          <i class="fas fa-file-medical"></i> <span>Records</span>
+        </li>
+        <li
+          class="nav-link active"
+          onclick="window.location.href = 'profile.html'"
+        >
+          <i class="fas fa-user-circle"></i> <span>Profile</span>
+        </li>
+        <li class="logout-mobile-item" onclick="confirmLogout()">
+          <i class="fas fa-sign-out-alt"></i> Logout
+        </li>
+      </ul>
+    </nav>
+
+    <header class="mobile-header">
+      <div class="mobile-logo" onclick="window.location.href = 'index.html'">
+        MediConnect
+      </div>
+      <span class="mobile-page-title" id="mobilePageTitle"></span>
+      <button class="header-logout-btn" onclick="confirmLogout()">
+        <i class="fas fa-sign-out-alt"></i>
+      </button>
+    </header>
+
+    <nav class="bottom-nav">
+      <ul>
+        <li id="bnav-dashboard" onclick="window.location.href = 'index.html'">
+          <i class="fas fa-home"></i>Home
+        </li>
+        <li
+          id="bnav-appointments"
+          onclick="window.location.href = 'appointments.html'"
+        >
+          <i class="fas fa-calendar-check"></i>Book
+        </li>
+        <li id="bnav-records" onclick="window.location.href = 'records.html'">
+          <i class="fas fa-file-medical"></i>Records
+        </li>
+        <li id="bnav-profile" onclick="window.location.href = 'profile.html'">
+          <i class="fas fa-user-circle"></i>Profile
+        </li>
+      </ul>
+    </nav>
+
+    <div class="nav-hint" id="navHint">
+      <i class="fas fa-hand-point-down" style="margin-right: 6px"></i>Tap icons
+      below to navigate
+    </div>
+
+    <div class="logout-overlay" id="logoutOverlay">
+      <div class="logout-modal">
+        <div class="modal-icon"><i class="fas fa-sign-out-alt"></i></div>
+        <h3>Log Out?</h3>
+        <p>You will be signed out of your account.</p>
+        <div class="modal-actions">
+          <button class="btn-cancel" onclick="closeLogout()">Cancel</button>
+          <button class="btn-logout-confirm" onclick="doLogout()">
+            Log Out
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <main class="main-content">
+      <section id="profile" class="page-section active">
+        <h1>My Profile</h1>
+
+        <!-- Avatar / identity card -->
+        <div
+          class="card"
+          style="
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            margin-bottom: 20px;
+            padding: 20px;
+          "
+        >
+          <div
+            style="
+              width: 56px;
+              height: 56px;
+              background: var(--primary-gradient);
+              border-radius: 50%;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              color: #fff;
+              font-size: 1.5rem;
+              flex-shrink: 0;
+            "
+          >
+            <i class="fas fa-user"></i>
+          </div>
+          <div>
+            <strong style="font-size: 1.1rem; display: block"
+              >Dorji Wangchuk</strong
+            >
+            <span style="font-size: 0.82rem; color: var(--text-muted)"
+              >Patient · Thimphu</span
+            >
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>Edit Details</h3>
+          <div class="form-grid">
+            <div class="form-group">
+              <label>Full Name</label>
+              <input type="text" value="Dorji Wangchuk" />
+            </div>
+            <div class="form-group">
+              <label>CID</label>
+              <input type="text" value="11410001234" />
+            </div>
+            <div class="form-group">
+              <label>Dzongkhag</label>
+              <input type="text" value="Thimphu" />
+            </div>
+            <div class="form-group">
+              <label>Gewog</label>
+              <input type="text" value="Chang" />
+            </div>
+            <div class="form-group">
+              <label>Phone</label>
+              <input type="text" value="+975 17123456" />
+            </div>
+          </div>
+          <br />
+          <button class="btn-primary">
+            <i class="fas fa-save" style="margin-right: 8px"></i>Save Changes
+          </button>
+        </div>
+
+        <!-- Mobile logout button at bottom of profile -->
+        <div style="margin-top: 8px; display: none" id="mobileLogoutSection">
+          <button
+            onclick="confirmLogout()"
+            style="
+              width: 100%;
+              padding: 14px;
+              border: 1px solid #fecaca;
+              background: #fff5f5;
+              color: #dc2626;
+              border-radius: 10px;
+              font-weight: 600;
+              font-size: 1rem;
+              cursor: pointer;
+            "
+          >
+            <i class="fas fa-sign-out-alt" style="margin-right: 8px"></i>Log Out
+          </button>
+        </div>
+      </section>
+    </main>
+
+    <script src="js/mobile-nav.js?v=2"></script>
+    <script>
+      window.addEventListener("load", function () {
+        if (window.innerWidth <= 750) {
+          document.getElementById("mobileLogoutSection").style.display =
+            "block";
+        }
+      });
+      window.addEventListener("resize", function () {
+        document.getElementById("mobileLogoutSection").style.display =
+          window.innerWidth <= 750 ? "block" : "none";
+      });
+    </script>
+  </body>
+</html>

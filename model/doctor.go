@@ -1,0 +1,138 @@
+package model
+
+import (
+	"database/sql"
+	"hospitalOPD/dataStore/postgres"
+)
+
+type Doctor struct {
+	DoctorId       int    `json:"doctorId"`
+	Name           string `json:"name"`
+	Specialization string `json:"specialization"`
+	DepartmentId   int    `json:"departmentId"`
+	DepartmentName string `json:"departmentName"`
+	Password       string `json:"password,omitempty"`
+}
+
+const queryInsertDoctor = `
+	INSERT INTO doctors (name, specialization, department_id, password)
+	VALUES ($1, $2, $3, $4)
+	RETURNING doctor_id;`
+
+func (d *Doctor) Create() error {
+	return postgres.Db.QueryRow(
+		queryInsertDoctor,
+		d.Name, d.Specialization, d.DepartmentId, d.Password,
+	).Scan(&d.DoctorId)
+}
+
+const queryGetDoctorById = `
+	SELECT d.doctor_id, d.name, d.specialization, d.department_id, COALESCE(dep.department_name, '') as department_name
+	FROM doctors d
+	LEFT JOIN departments dep ON d.department_id = dep.department_id
+	WHERE d.doctor_id = $1;`
+
+func (d *Doctor) Read() error {
+	return postgres.Db.QueryRow(queryGetDoctorById, d.DoctorId).Scan(
+		&d.DoctorId, &d.Name, &d.Specialization, &d.DepartmentId, &d.DepartmentName,
+	)
+}
+
+const queryUpdateDoctor = `
+	UPDATE doctors SET name = $1, specialization = $2, department_id = $3
+	WHERE doctor_id = $4 RETURNING doctor_id;`
+
+func (d *Doctor) Update() error {
+	return postgres.Db.QueryRow(
+		queryUpdateDoctor,
+		d.Name, d.Specialization, d.DepartmentId, d.DoctorId,
+	).Scan(&d.DoctorId)
+}
+
+const queryDeleteDoctor = `
+	DELETE FROM doctors WHERE doctor_id = $1 RETURNING doctor_id;`
+
+func (d *Doctor) Delete() error {
+	return postgres.Db.QueryRow(queryDeleteDoctor, d.DoctorId).Scan(&d.DoctorId)
+}
+
+const queryGetAllDoctors = `
+	SELECT d.doctor_id, d.name, d.specialization, d.department_id, COALESCE(dep.department_name, '') as department_name
+	FROM doctors d
+	LEFT JOIN departments dep ON d.department_id = dep.department_id
+	ORDER BY d.name;`
+
+func ReadAllDoctors() ([]Doctor, error) {
+	rows, err := postgres.Db.Query(queryGetAllDoctors)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var doctors []Doctor
+	for rows.Next() {
+		var d Doctor
+		if err := rows.Scan(&d.DoctorId, &d.Name, &d.Specialization, &d.DepartmentId, &d.DepartmentName); err != nil {
+			return nil, err
+		}
+		doctors = append(doctors, d)
+	}
+	return doctors, nil
+}
+
+const queryGetDoctorsByChamber = `
+	SELECT d.doctor_id, d.name, d.specialization, COALESCE(dep.department_name, '') as department_name
+	FROM doctors d
+	JOIN chamber_doctors cd ON d.doctor_id = cd.doctor_id
+	LEFT JOIN departments dep ON d.department_id = dep.department_id
+	WHERE cd.chamber_no = $1
+	ORDER BY d.name;`
+
+func ReadDoctorsByChamber(chamberNo int) ([]Doctor, error) {
+	rows, err := postgres.Db.Query(queryGetDoctorsByChamber, chamberNo)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var doctors []Doctor
+	for rows.Next() {
+		var d Doctor
+		if err := rows.Scan(&d.DoctorId, &d.Name, &d.Specialization, &d.DepartmentName); err != nil {
+			return nil, err
+		}
+		doctors = append(doctors, d)
+	}
+	return doctors, nil
+}
+
+const queryDoctorLogin = `
+	SELECT doctor_id, name, specialization
+	FROM doctors WHERE doctor_id = $1 AND password = $2;`
+
+func DoctorLogin(doctorId int, password string) (*Doctor, error) {
+	var d Doctor
+	err := postgres.Db.QueryRow(queryDoctorLogin, doctorId, password).Scan(
+		&d.DoctorId, &d.Name, &d.Specialization,
+	)
+	if err == sql.ErrNoRows {
+		return nil, nil
+	}
+	if err != nil {
+		return nil, err
+	}
+	return &d, nil
+}
+
+const queryGetChamberByDoctor = `
+	SELECT chamber_no FROM chamber_doctors
+	WHERE doctor_id = $1 LIMIT 1;`
+
+func GetChamberByDoctor(doctorId int) (int, error) {
+	var chamberNo int
+	err := postgres.Db.QueryRow(queryGetChamberByDoctor, doctorId).Scan(&chamberNo)
+	if err == sql.ErrNoRows {
+		return 0, sql.ErrNoRows
+	}
+	return chamberNo, err
+}
