@@ -5,10 +5,43 @@ const isMobile = () => window.innerWidth <= 750;
 const pageTitles = {
   dashboard:    'Home',
   appointments: 'Appointments',
-  records:      'Records',
   profile:      'Profile'
 };
-setTimeout (3000, () => console.log("Loaded") ) 
+
+const TIME_SLOTS = [
+  { val: '09:00', label: '9:00 – 9:15 AM' },
+  { val: '09:15', label: '9:15 – 9:30 AM' },
+  { val: '09:30', label: '9:30 – 9:45 AM' },
+  { val: '09:45', label: '9:45 – 10:00 AM' },
+  { val: '10:00', label: '10:00 – 10:15 AM' },
+  { val: '10:15', label: '10:15 – 10:30 AM' },
+  { val: '10:30', label: '10:30 – 10:45 AM' },
+  { val: '11:00', label: '11:00 – 11:15 AM' },
+  { val: '11:30', label: '11:30 – 11:45 AM' },
+  { val: '11:45', label: '11:45 AM – 12:00 PM' },
+  { val: '12:00', label: '12:00 – 12:15 PM' },
+  { val: '12:15', label: '12:15 – 12:30 PM' },
+  { val: '12:30', label: '12:30 – 12:45 PM' },
+  { val: '12:45', label: '12:45 – 1:00 PM' },
+  { val: '14:00', label: '2:00 – 2:15 PM' },
+  { val: '14:15', label: '2:15 – 2:30 PM' },
+  { val: '14:30', label: '2:30 – 2:45 PM' },
+  { val: '14:45', label: '2:45 – 3:00 PM' }
+];
+
+let _appointments = [];
+
+// ── HELPERS ───────────────────────────────────────────────────────
+function formatDate(d) {
+  if (!d) return '-';
+  return d.includes('T') ? d.split('T')[0] : d;
+}
+
+function formatTime(t) {
+  if (!t) return '-';
+  return t.includes('T') ? t.split('T')[1].substring(0, 5) : t;
+}
+
 // ── PAGE SWITCHING ────────────────────────────────────────────────
 function showPage(pageId, desktopEl, mobileTitle) {
   document.querySelectorAll('.page-section').forEach(function(s) { s.classList.remove('active'); });
@@ -23,7 +56,7 @@ function showPage(pageId, desktopEl, mobileTitle) {
 
   const titleEl = document.getElementById('mobilePageTitle');
   if (titleEl) titleEl.textContent = mobileTitle || pageTitles[pageId] || '';
-  
+
   const m = isMobile();
   document.querySelectorAll('.desktop-table').forEach(function(el) { el.style.display = m ? 'none' : 'block'; });
   document.querySelectorAll('.mobile-appt-list').forEach(function(el) { el.style.display = m ? 'block' : 'none'; });
@@ -31,7 +64,6 @@ function showPage(pageId, desktopEl, mobileTitle) {
   document.querySelectorAll('.mobile-activity').forEach(function(el) { el.style.display = m ? 'block' : 'none'; });
 
   if (pageId === 'appointments') loadAppointments();
-  if (pageId === 'records')      loadRecords();
   if (pageId === 'profile')      loadProfile();
   if (pageId === 'dashboard')    loadDashboard();
 }
@@ -71,29 +103,61 @@ function loadDashboard() {
   const welcomeH2 = document.querySelector('.welcome-desktop h2');
   if (welcomeH2) welcomeH2.textContent = 'Welcome back, ' + name + '!';
   const mobileH2 = document.querySelector('.welcome-mobile h2');
-  if (mobileH2) mobileH2.textContent = 'Hi, ' + name.split(' ')[0] + ' 👋';
+  if (mobileH2) mobileH2.textContent = 'Hi, ' + name.split(' ')[0] + '!';
 
   if (!cid) return;
 
   fetch('/patient/appointments/' + cid)
-    .then(function(res) {
-      if (!res.ok) return null;
-      return res.json();
-    })
+    .then(function(res) { return res.ok ? res.json() : []; })
+    .catch(function() { return []; })
     .then(function(apts) {
-      if (!apts) return;
-      const upcoming = apts.filter(function(a) {
-        return a.status === 'Pending' || a.status === 'Confirmed';
-      }).length;
+    apts = apts || [];
 
-      const upcomingEl = document.querySelector('.stat-card.blue h4');
-      if (upcomingEl) upcomingEl.textContent = upcoming;
+    const upcoming = apts.filter(function(a) { return a.status !== 'Cancelled'; }).length;
 
-      const desktopApptMsg = document.querySelector('.welcome-desktop p:first-of-type');
-      if (desktopApptMsg) desktopApptMsg.innerHTML =
-        '<i class="fas fa-calendar-check"></i> ' + upcoming + ' appointment' + (upcoming !== 1 ? 's' : '') + ' upcoming.';
-    })
-    .catch(function(e) { console.error('Dashboard load error:', e); });
+    const upcomingEl = document.querySelector('.stat-card.blue h4');
+    if (upcomingEl) upcomingEl.textContent = upcoming;
+
+    const desktopApptMsg = document.querySelector('.welcome-desktop p:first-of-type');
+    if (desktopApptMsg) desktopApptMsg.innerHTML =
+      '<i class="fas fa-calendar-check"></i> ' + upcoming + ' appointment' + (upcoming !== 1 ? 's' : '') + ' upcoming.';
+
+    const mobileApptMsg = document.querySelector('.welcome-mobile p');
+    if (mobileApptMsg) mobileApptMsg.innerHTML =
+      '<i class="fas fa-calendar-check"></i> ' + upcoming + ' appointment' + (upcoming !== 1 ? 's' : '') + ' upcoming';
+
+    const recent = apts.slice(0, 5);
+
+    const desktopActivity = document.querySelector('.desktop-activity');
+    if (desktopActivity) {
+      desktopActivity.innerHTML = recent.length === 0
+        ? '<p style="color:var(--text-muted)">No recent activity.</p>'
+        : recent.map(function(a) {
+            return '<div class="activity-card">' +
+              '<strong>Appointment <span class="badge ' + statusBadgeClass(a.status) + '">' + (a.status || 'Pending') + '</span></strong>' +
+              '<p style="color:var(--text-muted);font-size:0.9rem;margin:5px 0 0 0">' +
+                'Chamber ' + (a.chamber_no || '-') + ' · ' + formatDate(a.apt_date) + ' at ' + formatTime(a.apt_time) +
+              '</p>' +
+              '</div>';
+          }).join('');
+    }
+
+    const mobileActivity = document.querySelector('.mobile-activity');
+    if (mobileActivity) {
+      mobileActivity.innerHTML = recent.length === 0
+        ? '<p style="color:var(--text-muted)">No recent activity.</p>'
+        : recent.map(function(a) {
+            const pillColor = a.status === 'Confirmed' ? 'blue' : (a.status === 'Cancelled' ? 'orange' : 'green');
+            return '<div class="activity-pill">' +
+              '<div class="pill-icon ' + pillColor + '"><i class="fas fa-calendar-check"></i></div>' +
+              '<div class="pill-text">' +
+                '<strong>Chamber ' + (a.chamber_no || '-') + '</strong>' +
+                '<span>' + formatDate(a.apt_date) + ' · ' + formatTime(a.apt_time) + ' · ' + (a.status || 'Pending') + '</span>' +
+              '</div>' +
+              '</div>';
+          }).join('');
+    }
+  });
 }
 
 // ── LOAD APPOINTMENTS ─────────────────────────────────────────────
@@ -107,8 +171,8 @@ function loadAppointments() {
     })
     .then(function(apts) {
       if (apts === null) return;
-      console.log('appointments:', JSON.stringify(apts[0]));
-      renderAppointments(apts || []);
+      _appointments = apts || [];
+      renderAppointments(_appointments);
     })
     .catch(function() { showApptError('Network error. Please try again.'); });
 }
@@ -129,6 +193,40 @@ function statusBadgeClass(status) {
   return 'status-on';
 }
 
+function aptRowHTML(a) {
+  return '<td>#' + a.appointment_id + '</td>' +
+    '<td>' + (a.name || '-') + '</td>' +
+    '<td>' + formatDate(a.apt_date) + '</td>' +
+    '<td>' + formatTime(a.apt_time) + '</td>' +
+    '<td>' + (a.cid || '-') + '</td>' +
+    '<td><span class="badge ' + statusBadgeClass(a.status) + '">' + (a.status || 'Pending') + '</span></td>' +
+    '<td>' +
+      '<button class="btn-small" onclick="editAppointment(' + a.appointment_id + ')">Edit</button> ' +
+      (a.status !== 'Cancelled'
+        ? '<button class="btn-small btn-deact" onclick="cancelAppointment(' + a.appointment_id + ')">Cancel</button>'
+        : '<span style="color:var(--text-muted);font-size:0.8rem">Cancelled</span>') +
+    '</td>';
+}
+
+function aptCardHTML(a) {
+  return '<div class="appt-card-header">' +
+      '<strong>' + (a.name || 'Patient') + '</strong>' +
+      '<span class="badge ' + statusBadgeClass(a.status) + '">' + (a.status || 'Pending') + '</span>' +
+    '</div>' +
+    '<div class="appt-card-body">' +
+      '<div class="appt-info-item"><span class="info-label">Date</span><span class="info-value">' + formatDate(a.apt_date) + '</span></div>' +
+      '<div class="appt-info-item"><span class="info-label">Time</span><span class="info-value">' + formatTime(a.apt_time) + '</span></div>' +
+      '<div class="appt-info-item"><span class="info-label">Chamber</span><span class="info-value">' + (a.chamber_no || '-') + '</span></div>' +
+      '<div class="appt-info-item"><span class="info-label">ID</span><span class="info-value">#' + a.appointment_id + '</span></div>' +
+    '</div>' +
+    '<button class="btn-small" style="width:100%;margin-bottom:6px" onclick="editAppointment(' + a.appointment_id + ')">Edit</button>' +
+    (a.status !== 'Cancelled'
+      ? '<button class="btn-small btn-deact" style="width:100%" onclick="cancelAppointment(' + a.appointment_id + ')">' +
+          '<i class="fas fa-times" style="margin-right:6px"></i>Cancel' +
+        '</button>'
+      : '');
+}
+
 function renderAppointments(apts) {
   const m  = isMobile();
   const tb = document.getElementById('appointmentTableBody');
@@ -140,85 +238,98 @@ function renderAppointments(apts) {
     return;
   }
 
- if (tb) {
-  tb.innerHTML = apts.map(function(a) {
-    var timeDisplay = (a.apt_time || '-');
-    if (timeDisplay.includes('T')) {
-      timeDisplay = timeDisplay.split('T')[1].substring(0, 5);
-    }
-    var dateDisplay = (a.apt_date || '-');
-    if (dateDisplay.includes('T')) {
-      dateDisplay = dateDisplay.split('T')[0];
-    }
-    return '<tr>' +
-      '<td>#' + a.appointment_id + '</td>' +
-      '<td>' + (a.name || '-') + '</td>' +
-      '<td>' + dateDisplay + '</td>' +
-      '<td>' + timeDisplay + '</td>' +
-      '<td>' + (a.cid || '-') + '</td>' +
-      '<td><span class="badge ' + statusBadgeClass(a.status) + '">' + (a.status || 'Pending') + '</span></td>' +
-      '<td>' +
-        '<button class="btn-small" onclick="editAppointment(' + a.appointment_id + ')">Edit</button> ' +
-        (a.status !== 'Cancelled'
-          ? '<button class="btn-small btn-deact" onclick="cancelAppointment(' + a.appointment_id + ')">Cancel</button>'
-          : '<span style="color:var(--text-muted);font-size:0.8rem">Cancelled</span>') +
-      '</td>' +
-      '</tr>';
-  }).join('');
-}
+  if (tb) {
+    tb.innerHTML = apts.map(function(a) {
+      return '<tr id="apt-row-' + a.appointment_id + '">' + aptRowHTML(a) + '</tr>';
+    }).join('');
+  }
 
-if (ml && m) {
+  if (ml && m) {
     ml.innerHTML = apts.map(function(a) {
-      var timeDisplay = (a.apt_time || '-');
-      if (timeDisplay.includes('T')) {
-        timeDisplay = timeDisplay.split('T')[1].substring(0, 5);
-      }
-      var dateDisplay = (a.apt_date || '-');
-      if (dateDisplay.includes('T')) {
-        dateDisplay = dateDisplay.split('T')[0];
-      }
-      return '<div class="appt-card">' +
-        '<div class="appt-card-header">' +
-          '<strong>' + (a.name || 'Patient') + '</strong>' +
-          '<span class="badge ' + statusBadgeClass(a.status) + '">' + (a.status || 'Pending') + '</span>' +
-        '</div>' +
-        '<div class="appt-card-body">' +
-          '<div class="appt-info-item"><span class="info-label">Date</span><span class="info-value">' + dateDisplay + '</span></div>' +
-          '<div class="appt-info-item"><span class="info-label">Time</span><span class="info-value">' + timeDisplay + '</span></div>' +
-          '<div class="appt-info-item"><span class="info-label">Chamber</span><span class="info-value">' + (a.chamber_no || '-') + '</span></div>' +
-          '<div class="appt-info-item"><span class="info-label">ID</span><span class="info-value">#' + a.appointment_id + '</span></div>' +
-        '</div>' +
-        '<button class="btn-small" style="width:100%;margin-bottom:6px" onclick="editAppointment(' + a.appointment_id + ')">Edit</button>' +
-        (a.status !== 'Cancelled'
-          ? '<button class="btn-small btn-deact" style="width:100%" onclick="cancelAppointment(' + a.appointment_id + ')">' +
-              '<i class="fas fa-times" style="margin-right:6px"></i>Cancel' +
-            '</button>'
-          : '') +
-        '</div>';
+      return '<div class="appt-card" id="apt-card-' + a.appointment_id + '">' + aptCardHTML(a) + '</div>';
     }).join('');
   }
 }
 
-// ── EDIT APPOINTMENT ──────────────────────────────────────────────
+// ── EDIT APPOINTMENT (inline card) ───────────────────────────────
+function closeEditCard() {
+  const card     = document.getElementById('editApptCard');
+  const backdrop = document.getElementById('editApptBackdrop');
+  if (card)     card.remove();
+  if (backdrop) backdrop.remove();
+}
+
 function editAppointment(id) {
-  const newDate = prompt('Enter new date (YYYY-MM-DD):');
-  if (!newDate) return;
-  const newTime = prompt('Enter new time slot (e.g. 09:00):');
-  if (!newTime) return;
+  const apt = _appointments.find(function(a) { return a.appointment_id === id; });
+  closeEditCard();
+
+  const currentDate = apt ? formatDate(apt.apt_date) : '';
+  const currentTime = apt ? formatTime(apt.apt_time) : '';
+
+  const slotOptions = TIME_SLOTS.map(function(s) {
+    return '<option value="' + s.val + '"' + (currentTime === s.val ? ' selected' : '') + '>' + s.label + '</option>';
+  }).join('');
+
+  const backdrop = document.createElement('div');
+  backdrop.id = 'editApptBackdrop';
+  backdrop.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:999';
+  backdrop.onclick = closeEditCard;
+
+  const card = document.createElement('div');
+  card.id = 'editApptCard';
+  card.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:1000;' +
+    'background:#fff;padding:28px;border-radius:12px;box-shadow:0 8px 32px rgba(0,0,0,0.25);' +
+    'min-width:300px;max-width:90vw;width:380px;box-sizing:border-box';
+  card.innerHTML =
+    '<h3 style="margin:0 0 20px 0;font-size:1.1rem">Edit Appointment #' + id + '</h3>' +
+    '<div class="form-group" style="margin-bottom:14px">' +
+      '<label style="display:block;margin-bottom:4px;font-size:0.85rem;font-weight:600">Date</label>' +
+      '<input type="date" id="editDate" value="' + currentDate + '" style="width:100%;box-sizing:border-box" />' +
+    '</div>' +
+    '<div class="form-group" style="margin-bottom:20px">' +
+      '<label style="display:block;margin-bottom:4px;font-size:0.85rem;font-weight:600">Time Slot</label>' +
+      '<select id="editTime" style="width:100%;box-sizing:border-box">' + slotOptions + '</select>' +
+    '</div>' +
+    '<div style="display:flex;gap:10px">' +
+      '<button class="btn-primary" style="flex:1" onclick="saveEditAppointment(' + id + ')">Save</button>' +
+      '<button class="btn-cancel" style="flex:1" onclick="closeEditCard()">Cancel</button>' +
+    '</div>';
+
+  document.body.appendChild(backdrop);
+  document.body.appendChild(card);
+}
+
+function saveEditAppointment(id) {
+  const newDate = document.getElementById('editDate').value;
+  const newTime = document.getElementById('editTime').value;
+
+  if (!newDate) { alert('Please select a date.'); return; }
+  if (!newTime) { alert('Please select a time slot.'); return; }
+
+  const apt = _appointments.find(function(a) { return a.appointment_id === id; });
 
   fetch('/appointment/' + id, {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
-      apt_date: newDate,
-      apt_time: newTime,
-      status:   'Pending'
+      apt_date:   newDate,
+      apt_time:   newTime,
+      chamber_no: apt ? apt.chamber_no : 0,
+      cid:        apt ? apt.cid : (sessionStorage.getItem('userCid') || ''),
+      status:     apt ? apt.status : 'Pending'
     })
   })
   .then(function(res) {
     if (res.ok) {
-      alert('Appointment updated.');
-      loadAppointments();
+      if (apt) {
+        apt.apt_date = newDate;
+        apt.apt_time = newTime;
+        const row = document.getElementById('apt-row-' + id);
+        if (row) row.innerHTML = aptRowHTML(apt);
+        const mcard = document.getElementById('apt-card-' + id);
+        if (mcard) mcard.innerHTML = aptCardHTML(apt);
+      }
+      closeEditCard();
     } else {
       return res.json().then(function(d) { alert('Error: ' + (d.error || 'Could not update.')); });
     }
@@ -233,7 +344,7 @@ function bookAppointment(e) {
   const chamberEl = document.getElementById('chamberNo');
   const chamberNo = chamberEl ? chamberEl.value : null;
   const aptDate = document.getElementById('appointmentDate').value;
-  const formattedDate = aptDate ? new Date(aptDate).toISOString().split('T')[0] : '';
+  const formattedDate = aptDate ? aptDate : '';
   const aptTime = document.getElementById('appointmentTime').value;
   const cid = sessionStorage.getItem('userCid');
 
@@ -260,7 +371,7 @@ function bookAppointment(e) {
       if (!res.ok) {
         alert('Booking failed: ' + (data.error || 'Unknown error'));
       } else {
-        alert('Appointment booked! ID: #' + data.appointment_id);
+        alert('Appointment booked! ID: #' + data.aptID);
         e.target.reset();
         loadAppointments();
       }
@@ -279,8 +390,10 @@ function cancelAppointment(id) {
   fetch('/appointment/' + id, { method: 'DELETE' })
     .then(function(res) {
       if (res.ok) {
-        alert('Appointment cancelled.');
-        loadAppointments();
+        const row = document.getElementById('apt-row-' + id);
+        if (row) row.remove();
+        const card = document.getElementById('apt-card-' + id);
+        if (card) card.remove();
       } else {
         return res.json().then(function(data) {
           alert('Error: ' + (data.error || 'Could not cancel.'));
@@ -310,42 +423,6 @@ function loadChambers() {
     .catch(function(e) { console.error('Could not load chambers:', e); });
 }
 
-// ── LOAD RECORDS ──────────────────────────────────────────────────
-function loadRecords() {
-  const container = document.getElementById('recordsContainer');
-  if (!container) return;
-
-  const cid = sessionStorage.getItem('userCid');
-  if (!cid) { container.innerHTML = '<p style="color:var(--text-muted)">Session expired.</p>'; return; }
-
-  fetch('/patient/records/' + cid)
-    .then(function(res) {
-      if (!res.ok) { container.innerHTML = '<p style="color:var(--text-muted)">No records found.</p>'; return null; }
-      return res.json();
-    })
-    .then(function(records) {
-      if (!records) return;
-      if (records.length === 0) {
-        container.innerHTML = '<p style="color:var(--text-muted)">No medical records yet.</p>';
-        return;
-      }
-      container.innerHTML = records.map(function(r) {
-        const prescriptions = (r.prescriptions || []).join(', ') || '-';
-        return '<div class="card" style="margin-bottom:16px">' +
-          '<p><strong>Record ID:</strong> REC-' + r.record_id + '</p>' +
-          '<p><strong>Date:</strong> ' + (r.record_date || '-') + '</p>' +
-          '<p><strong>Diagnosis:</strong> ' + (r.diagnosis || '-') + '</p>' +
-          '<p><strong>Treatment:</strong> ' + (r.treatment || '-') + '</p>' +
-          '<p><strong>Doctor\'s Notes:</strong> ' + (r.doctor_notes || '-') + '</p>' +
-          '<p style="margin-top:10px"><strong>Prescriptions:</strong> ' + prescriptions + '</p>' +
-          '</div>';
-      }).join('');
-    })
-    .catch(function() {
-      container.innerHTML = '<p style="color:var(--text-muted)">Could not load records.</p>';
-    });
-}
-
 // ── LOAD PROFILE ──────────────────────────────────────────────────
 function loadProfile() {
   const cid = sessionStorage.getItem('userCid');
@@ -358,13 +435,14 @@ function loadProfile() {
     })
     .then(function(u) {
       if (!u) return;
-      const set = function(id, val) { const el = document.getElementById(id); if (el && val) el.value = val; };
+      const set = function(id, val) { const el = document.getElementById(id); if (el && val != null) el.value = val; };
       set('profileName',      u.name);
       set('profileCid',       u.cid);
       set('profileDzongkhag', u.dzongkhag);
+      set('profileGewog',     u.gewog);
       set('profilePhone',     u.phone_no);
       set('profileGender',    u.gender);
-      set('profileDob',       u.dob);
+      set('profileDob',       u.dob ? u.dob.split('T')[0] : '');
     })
     .catch(function(e) { console.error('Could not load profile:', e); });
 }
@@ -373,12 +451,14 @@ function loadProfile() {
 function saveProfile(e) {
   e.preventDefault();
   const cid = sessionStorage.getItem('userCid');
+  const g = function(id) { const el = document.getElementById(id); return el ? el.value : ''; };
   const payload = {
-    name:      document.getElementById('profileName') ? document.getElementById('profileName').value : '',
-    dzongkhag: document.getElementById('profileDzongkhag') ? document.getElementById('profileDzongkhag').value : '',
-    phone_no:  document.getElementById('profilePhone') ? document.getElementById('profilePhone').value : '',
-    gender:    document.getElementById('profileGender') ? document.getElementById('profileGender').value : '',
-    dob:       document.getElementById('profileDob') ? document.getElementById('profileDob').value : ''
+    name:      g('profileName'),
+    dzongkhag: g('profileDzongkhag'),
+    gewog:     g('profileGewog'),
+    phone_no:  g('profilePhone'),
+    gender:    g('profileGender'),
+    dob:       g('profileDob')
   };
 
   fetch('/user/' + cid, {
@@ -392,6 +472,35 @@ function saveProfile(e) {
   .catch(function() { alert('Network error.'); });
 }
 
+// ── CHANGE PASSWORD ───────────────────────────────────────────────
+function changePassword(e) {
+  e.preventDefault();
+  const cid     = sessionStorage.getItem('userCid');
+  const current = document.getElementById('currentPassword').value;
+  const newPw   = document.getElementById('newPassword').value;
+  const confirm = document.getElementById('confirmPassword').value;
+
+  if (!current || !newPw || !confirm) { alert('All fields are required.'); return; }
+  if (newPw !== confirm) { alert('New passwords do not match.'); return; }
+
+  fetch('/user/' + cid + '/password', {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ current_password: current, new_password: newPw })
+  })
+  .then(function(res) {
+    return res.json().then(function(data) {
+      if (res.ok) {
+        alert('Password changed successfully.');
+        document.getElementById('changePasswordForm').reset();
+      } else {
+        alert('Error: ' + (data.error || 'Could not change password.'));
+      }
+    });
+  })
+  .catch(function() { alert('Network error.'); });
+}
+
 // ── RESIZE HANDLER ────────────────────────────────────────────────
 window.addEventListener('resize', function() {
   const active = document.querySelector('.page-section.active');
@@ -400,7 +509,6 @@ window.addEventListener('resize', function() {
 
 // ── INIT ──────────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', function() {
-  console.log('init running, cid:', sessionStorage.getItem('userCid'));
   const cid = sessionStorage.getItem('userCid');
   if (!cid) { window.location.href = 'login.html'; return; }
 
@@ -412,6 +520,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
   const profileForm = document.getElementById('profileForm');
   if (profileForm) profileForm.addEventListener('submit', saveProfile);
+
+  const pwForm = document.getElementById('changePasswordForm');
+  if (pwForm) pwForm.addEventListener('submit', changePassword);
 
   loadChambers();
   showPage('dashboard', null, 'Home');

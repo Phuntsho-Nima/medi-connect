@@ -19,6 +19,7 @@ func InitializeRoutes() {
 	router.HandleFunc("/doctor/login", controller.LoginDoctor).Methods("POST")
 
 	// USER (PATIENT) ROUTES — must be logged in as "user"
+	router.HandleFunc("/user/{cid}/password", middleware.RequireRole("user", controller.ChangePassword)).Methods("PUT")
 	router.HandleFunc("/user/{cid}", middleware.RequireRole("user", controller.GetUser)).Methods("GET")
 	router.HandleFunc("/user/{cid}", middleware.RequireRole("user", controller.UpdateUser)).Methods("PUT")
 	router.HandleFunc("/user/logout", middleware.RequireRole("user", controller.LogoutUser)).Methods("POST")
@@ -28,9 +29,6 @@ func InitializeRoutes() {
 	router.HandleFunc("/appointment/{aptId}", middleware.RequireRole("user", controller.GetAppointment)).Methods("GET")
 	router.HandleFunc("/appointment/{aptId}", middleware.RequireRole("user", controller.DeleteAppointment)).Methods("DELETE")
 
-	// Records — patients
-	router.HandleFunc("/patient/records/{cid}", middleware.RequireRole("user", controller.GetPatientRecords)).Methods("GET")
-
 	// DOCTOR ROUTES — must be logged in as "doctor"
 	router.HandleFunc("/doctor/dashboard", middleware.RequireRole("doctor", controller.GetDoctorDashboard)).Methods("GET")
 	router.HandleFunc("/doctor/logout", middleware.RequireRole("doctor", controller.LogoutDoctor)).Methods("POST")
@@ -39,25 +37,24 @@ func InitializeRoutes() {
 	router.HandleFunc("/doctor/appointment/{aptId}", middleware.RequireRole("doctor", controller.UpdateAppointment)).Methods("PUT")
 	router.HandleFunc("/doctor/appointment/{aptId}/status", middleware.RequireRole("doctor", controller.UpdateAppointmentStatus)).Methods("POST")
 	router.HandleFunc("/doctor/chamber/{chamberId}/appointments", middleware.RequireRole("doctor", controller.GetChamberAppointments)).Methods("GET")
-
-	// Records — doctor
-	router.HandleFunc("/doctor/record", middleware.RequireRole("doctor", controller.AddRecord)).Methods("POST")
-	router.HandleFunc("/doctor/record/{recordId}", middleware.RequireRole("doctor", controller.GetRecord)).Methods("GET")
+	router.HandleFunc("/doctor/chamber/{chamberId}/patients",     middleware.RequireRole("doctor", controller.GetDoctorPatients)).Methods("GET")
+	router.HandleFunc("/doctor/chamber/{chamberId}/activity",     middleware.RequireRole("doctor", controller.GetDoctorActivity)).Methods("GET")
 
 	// ADMIN ROUTES — must be logged in as "admin"
 	router.HandleFunc("/admin/logout", middleware.RequireRole("admin", controller.LogoutAdmin)).Methods("POST")
 	router.HandleFunc("/admin/dashboard", middleware.RequireRole("admin", controller.GetAdminDashboard)).Methods("GET")
+	router.HandleFunc("/admin/activity", middleware.RequireRole("admin", controller.GetAdminActivity)).Methods("GET")
+	router.HandleFunc("/admin/settings/profile", middleware.RequireRole("admin", controller.GetAdminProfileHandler)).Methods("GET")
+	router.HandleFunc("/admin/settings/hospital-name", middleware.RequireRole("admin", controller.GetHospitalConfigHandler)).Methods("GET")
+	router.HandleFunc("/admin/settings/hospital-name", middleware.RequireRole("admin", controller.SetHospitalConfigHandler)).Methods("POST")
+	router.HandleFunc("/admin/settings/email", middleware.RequireRole("admin", controller.UpdateAdminEmailHandler)).Methods("POST")
+	router.HandleFunc("/admin/settings/password", middleware.RequireRole("admin", controller.UpdateAdminPasswordHandler)).Methods("POST")
 
 	// Appointments — admin
 	router.HandleFunc("/admin/appointments", middleware.RequireRole("admin", controller.GetAllAppointments)).Methods("GET")
 	router.HandleFunc("/admin/appointment/{aptId}", middleware.RequireRole("admin", controller.UpdateAppointment)).Methods("PUT")
 	router.HandleFunc("/admin/appointment/{aptId}", middleware.RequireRole("admin", controller.DeleteAppointment)).Methods("DELETE")
 	router.HandleFunc("/admin/appointment/{aptId}/status", middleware.RequireRole("admin", controller.UpdateAppointmentStatus)).Methods("POST")
-
-	// Users — admin
-	router.HandleFunc("/admin/users", middleware.RequireRole("admin", controller.GetAllUsers)).Methods("GET")
-	router.HandleFunc("/admin/user/{cid}", middleware.RequireRole("admin", controller.GetUser)).Methods("GET")
-	router.HandleFunc("/admin/user/{cid}", middleware.RequireRole("admin", controller.DeleteUser)).Methods("DELETE")
 
 	// Chambers — admin
 	router.HandleFunc("/admin/chambers", middleware.RequireRole("admin", controller.GetAllChambers)).Methods("GET")
@@ -72,9 +69,6 @@ func InitializeRoutes() {
 	router.HandleFunc("/admin/doctor", middleware.RequireRole("admin", controller.AddDoctor)).Methods("POST")
 	router.HandleFunc("/admin/doctor/{doctorId}", middleware.RequireRole("admin", controller.UpdateDoctor)).Methods("PUT")
 	router.HandleFunc("/admin/doctor/{doctorId}", middleware.RequireRole("admin", controller.DeleteDoctor)).Methods("DELETE")
-
-	// Records — admin
-	router.HandleFunc("/admin/record/{recordId}", middleware.RequireRole("admin", controller.DeleteRecord)).Methods("DELETE")
 
 	// SHARED — any logged in role
 	router.HandleFunc("/chambers/available", middleware.AuthMiddleware(controller.GetAvailableChambers)).Methods("GET")

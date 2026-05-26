@@ -22,9 +22,6 @@
         <li class="active" onclick="showPage('dashboard', this)">
           <i class="fas fa-th-large"></i> <span>Dashboard</span>
         </li>
-        <li onclick="showPage('users', this)">
-          <i class="fas fa-users-cog"></i> <span>Users</span>
-        </li>
         <li onclick="showPage('doctors', this)">
           <i class="fas fa-user-md"></i> <span>Doctors</span>
         </li>
@@ -63,9 +60,6 @@
           onclick="showPage('dashboard', null, 'Home')"
         >
           <i class="fas fa-home"></i> Home
-        </li>
-        <li id="bnav-users" onclick="showPage('users', null, 'Users')">
-          <i class="fas fa-users-cog"></i> Users
         </li>
         <li id="bnav-doctors" onclick="showPage('doctors', null, 'Doctors')">
           <i class="fas fa-user-md"></i> Doctors
@@ -114,36 +108,25 @@
           <i class="fas fa-shield-alt"></i>
           System status:
           <strong style="margin-left: 4px">All services operational</strong>
-          &nbsp;·&nbsp; Last backup: 30 Apr 2026, 03:00 AM
         </div>
 
         <div class="welcome-section welcome-desktop">
-          <h2>Welcome, Admin Tenzin Dorji!</h2>
-          <p>
-            <i class="fas fa-users"></i> 142 registered users across 3 roles.
-          </p>
-          <p>
-            <i class="fas fa-calendar-check"></i> 24 appointments scheduled
-            today across all departments.
+          <h2 id="welcomeHeading">Welcome, Admin!</h2>
+          <p id="welcomeStats">
+            <i class="fas fa-users"></i> Loading…
           </p>
         </div>
         <div
           class="welcome-section welcome-mobile"
           style="padding: 20px 20px 20px 26px"
         >
-          <h2 style="font-size: 1.3rem; margin-bottom: 6px">Hi, Tenzin 👋</h2>
-          <p style="font-size: 0.88rem; margin: 0">
-            <i class="fas fa-users"></i> 142 users · 24 appointments today
+          <h2 style="font-size: 1.3rem; margin-bottom: 6px" id="welcomeMobileHeading">Hi, Admin 👋</h2>
+          <p style="font-size: 0.88rem; margin: 0" id="welcomeMobileStats">
+            <i class="fas fa-users"></i> Loading…
           </p>
         </div>
 
         <div class="quick-actions">
-          <button
-            class="quick-action-btn"
-            onclick="showPage('users', null, 'Users')"
-          >
-            <i class="fas fa-users-cog"></i> Manage Users
-          </button>
           <button
             class="quick-action-btn"
             onclick="showPage('reports', null, 'Reports')"
@@ -156,22 +139,22 @@
           <div class="stat-card purple">
             <div class="stat-icon"><i class="fas fa-users"></i></div>
             <div class="stat-content">
-              <h4>142</h4>
+              <h4 id="statUsers">0</h4>
               <p>Total Users</p>
             </div>
           </div>
           <div class="stat-card blue">
             <div class="stat-icon"><i class="fas fa-user-md"></i></div>
             <div class="stat-content">
-              <h4>18</h4>
+              <h4 id="statDoctors">0</h4>
               <p>Doctors</p>
             </div>
           </div>
           <div class="stat-card amber">
             <div class="stat-icon"><i class="fas fa-calendar-check"></i></div>
             <div class="stat-content">
-              <h4>24</h4>
-              <p>Today's Appts</p>
+              <h4 id="statAppointments">0</h4>
+              <p>Total Appointments</p>
             </div>
           </div>
           <div class="stat-card rose">
@@ -179,7 +162,7 @@
               <i class="fas fa-exclamation-triangle"></i>
             </div>
             <div class="stat-content">
-              <h4>3</h4>
+              <h4>0</h4>
               <p>Pending Issues</p>
             </div>
           </div>
@@ -192,44 +175,10 @@
               <i
                 class="fas fa-stream"
                 style="color: var(--role-color); margin-right: 8px"
-              ></i
-              >System Activity
+              ></i>System Activity
             </h3>
-            <div class="feed-item">
-              <div class="feed-dot purple"></div>
-              <div class="feed-text">
-                <strong>New doctor registered</strong
-                ><span>Dr. Sonam Tshering · 2 mins ago</span>
-              </div>
-            </div>
-            <div class="feed-item">
-              <div class="feed-dot blue"></div>
-              <div class="feed-text">
-                <strong>Appointment approved</strong
-                ><span>Appt #8834 · Cardiology · 15 mins ago</span>
-              </div>
-            </div>
-            <div class="feed-item">
-              <div class="feed-dot amber"></div>
-              <div class="feed-text">
-                <strong>Patient record updated</strong
-                ><span>CID 11410001234 · 32 mins ago</span>
-              </div>
-            </div>
-            <div class="feed-item">
-              <div class="feed-dot rose"></div>
-              <div class="feed-text">
-                <strong>Failed login attempt</strong
-                ><span>Unknown user · 1 hr ago</span>
-              </div>
-            </div>
-            <div class="feed-item">
-              <div class="feed-dot green"></div>
-              <div class="feed-text">
-                <strong>Daily backup completed</strong
-                ><span>03:00 AM · All data secured</span>
-              </div>
-            </div>
+            <div class="desktop-activity"></div>
+            <div class="mobile-activity" style="display: none"></div>
           </div>
 
           <!-- Bar chart -->
@@ -238,8 +187,7 @@
               <i
                 class="fas fa-chart-bar"
                 style="color: var(--role-color); margin-right: 8px"
-              ></i
-              >Appointments by Dept
+              ></i>Appointments by Dept
             </h3>
             <div class="bar-chart" style="margin-top: 12px">
               <div class="bar-row">
@@ -252,241 +200,24 @@
               <div class="bar-row">
                 <span class="bar-label">Cardiology</span>
                 <div class="bar-track">
-                  <div
-                    class="bar-fill green"
-                    data-w="55%"
-                    style="width: 0"
-                  ></div>
+                  <div class="bar-fill green" data-w="55%" style="width: 0"></div>
                 </div>
                 <span class="bar-val">55%</span>
               </div>
               <div class="bar-row">
                 <span class="bar-label">Pediatrics</span>
                 <div class="bar-track">
-                  <div
-                    class="bar-fill amber"
-                    data-w="40%"
-                    style="width: 0"
-                  ></div>
+                  <div class="bar-fill amber" data-w="40%" style="width: 0"></div>
                 </div>
                 <span class="bar-val">40%</span>
               </div>
               <div class="bar-row">
                 <span class="bar-label">Gen. Surgery</span>
                 <div class="bar-track">
-                  <div
-                    class="bar-fill rose"
-                    data-w="28%"
-                    style="width: 0"
-                  ></div>
+                  <div class="bar-fill rose" data-w="28%" style="width: 0"></div>
                 </div>
                 <span class="bar-val">28%</span>
               </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- ══ USERS ══ -->
-      <section id="users" class="page-section">
-        <h1>User Management</h1>
-
-        <div class="card">
-          <h3>Add New User</h3>
-          <form id="addUserForm" style="margin-top: 16px">
-            <div class="form-grid">
-              <div class="form-group">
-                <label>Full Name</label
-                ><input
-                  type="text"
-                  id="newUserName"
-                  placeholder="Full name"
-                  required
-                />
-              </div>
-              <div class="form-group">
-                <label>Email</label
-                ><input
-                  type="email"
-                  id="newUserEmail"
-                  placeholder="user@mediconnect.bt"
-                  required
-                />
-              </div>
-              <div class="form-group">
-                <label>Role</label>
-                <select id="newUserRole" required>
-                  <option value="">Select Role</option>
-                  <option>Patient</option>
-                  <option>Doctor</option>
-                  <option>Admin</option>
-                </select>
-              </div>
-              <div class="form-group">
-                <label>CID No.</label
-                ><input
-                  type="text"
-                  id="newUserCid"
-                  placeholder="e.g. 11410001234"
-                  required
-                />
-              </div>
-            </div>
-            <button type="submit" class="btn-primary" style="margin-top: 20px">
-              <i class="fas fa-user-plus" style="margin-right: 8px"></i>Create
-              User
-            </button>
-          </form>
-        </div>
-
-        <div class="card">
-          <h3>All Users</h3>
-          <div class="desktop-table">
-            <table>
-              <thead>
-                <tr>
-                  <th>ID</th>
-                  <th>Name</th>
-                  <th>CID No.</th>
-                  <th>Role</th>
-                  <th>Email</th>
-                  <th>Status</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr id="urow-1">
-                  <td>USR-001</td>
-                  <td>Tenzin Dorji</td>
-                  <td>11410000001</td>
-                  <td><span class="role-badge role-admin">Admin</span></td>
-                  <td>admin@gmail.com</td>
-                  <td><span class="badge status-active">Active</span></td>
-                  <td>
-                    <button class="btn-small btn-edit" onclick="editUser(1)">
-                      Edit
-                    </button>
-                  </td>
-                </tr>
-                <tr id="urow-2">
-                  <td>USR-002</td>
-                  <td>Dr. Karma Wangchuk</td>
-                  <td>11410000047</td>
-                  <td><span class="role-badge role-doctor">Doctor</span></td>
-                  <td>doctor@gmail.com</td>
-                  <td><span class="badge status-active">Active</span></td>
-                  <td>
-                    <button class="btn-small btn-edit" onclick="editUser(2)">
-                      Edit
-                    </button>
-                    <button
-                      class="btn-small btn-deact"
-                      onclick="toggleUserStatus(2, this)"
-                    >
-                      Deactivate
-                    </button>
-                  </td>
-                </tr>
-                <tr id="urow-3">
-                  <td>USR-003</td>
-                  <td>Dorji Wangchuk</td>
-                  <td>11410001234</td>
-                  <td><span class="role-badge role-patient">Patient</span></td>
-                  <td>dorji@email.bt</td>
-                  <td><span class="badge status-active">Active</span></td>
-                  <td>
-                    <button class="btn-small btn-edit" onclick="editUser(3)">
-                      Edit
-                    </button>
-                    <button
-                      class="btn-small btn-deact"
-                      onclick="toggleUserStatus(3, this)"
-                    >
-                      Deactivate
-                    </button>
-                  </td>
-                </tr>
-                <tr id="urow-4">
-                  <td>USR-004</td>
-                  <td>Pema Seldon</td>
-                  <td>11410005678</td>
-                  <td><span class="role-badge role-patient">Patient</span></td>
-                  <td>pema@email.bt</td>
-                  <td><span class="badge status-inactive">Inactive</span></td>
-                  <td>
-                    <button class="btn-small btn-edit" onclick="editUser(4)">
-                      Edit
-                    </button>
-                    <button
-                      class="btn-small btn-activate"
-                      onclick="toggleUserStatus(4, this)"
-                    >
-                      Activate
-                    </button>
-                  </td>
-                </tr>
-                <tr id="urow-5">
-                  <td>USR-005</td>
-                  <td>Dr. Sonam Tshering</td>
-                  <td>11410000088</td>
-                  <td><span class="role-badge role-doctor">Doctor</span></td>
-                  <td>sonam@mediconnect.bt</td>
-                  <td><span class="badge status-pending">Pending</span></td>
-                  <td>
-                    <button class="btn-small btn-edit" onclick="editUser(5)">
-                      Edit
-                    </button>
-                    <button
-                      class="btn-small btn-activate"
-                      onclick="toggleUserStatus(5, this)"
-                    >
-                      Activate
-                    </button>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-          <div class="mobile-card-list" style="display: none">
-            <div class="note-card" style="border: 1px solid var(--border)">
-              <div class="note-card-header">
-                <strong>Tenzin Dorji</strong
-                ><span class="badge status-active">Active</span>
-              </div>
-              <p>
-                <span class="role-badge role-admin">Admin</span> &nbsp;USR-001 ·
-                admin@gmail.com
-              </p>
-            </div>
-            <div class="note-card" style="border: 1px solid var(--border)">
-              <div class="note-card-header">
-                <strong>Dr. Karma Wangchuk</strong
-                ><span class="badge status-active">Active</span>
-              </div>
-              <p>
-                <span class="role-badge role-doctor">Doctor</span> &nbsp;USR-002
-                · doctor@gmail.com
-              </p>
-            </div>
-            <div class="note-card" style="border: 1px solid var(--border)">
-              <div class="note-card-header">
-                <strong>Dorji Wangchuk</strong
-                ><span class="badge status-active">Active</span>
-              </div>
-              <p>
-                <span class="role-badge role-patient">Patient</span>
-                &nbsp;USR-003 · dorji@email.bt
-              </p>
-            </div>
-            <div class="note-card" style="border: 1px solid var(--border)">
-              <div class="note-card-header">
-                <strong>Pema Seldon</strong
-                ><span class="badge status-inactive">Inactive</span>
-              </div>
-              <p>
-                <span class="role-badge role-patient">Patient</span>
-                &nbsp;USR-004 · pema@email.bt
-              </p>
             </div>
           </div>
         </div>
@@ -501,123 +232,21 @@
             <table>
               <thead>
                 <tr>
-                  <th>Appt ID</th>
+                  <th>#</th>
                   <th>Patient</th>
                   <th>CID No.</th>
                   <th>Doctor</th>
                   <th>Dept</th>
                   <th>Date</th>
+                  <th>Time</th>
                   <th>Status</th>
                   <th>Actions</th>
                 </tr>
               </thead>
-              <tbody>
-                <tr id="aprow-8821">
-                  <td>#8821</td>
-                  <td>Dorji Wangchuk</td>
-                  <td>11410001234</td>
-                  <td>Dr. Karma Wangchuk</td>
-                  <td>OPD</td>
-                  <td>2026-04-30</td>
-                  <td><span class="badge status-on">Approved</span></td>
-                  <td>
-                    <button
-                      class="btn-small btn-deact"
-                      onclick="cancelAppt(8821)"
-                    >
-                      Cancel
-                    </button>
-                  </td>
-                </tr>
-                <tr id="aprow-8834">
-                  <td>#8834</td>
-                  <td>Pema Seldon</td>
-                  <td>11410005678</td>
-                  <td>Dr. Karma Wangchuk</td>
-                  <td>Cardiology</td>
-                  <td>2026-04-30</td>
-                  <td><span class="badge status-pending">Pending</span></td>
-                  <td>
-                    <button
-                      class="btn-small btn-activate"
-                      onclick="approveAppt(8834)"
-                    >
-                      Approve
-                    </button>
-                    <button
-                      class="btn-small btn-deact"
-                      onclick="cancelAppt(8834)"
-                    >
-                      Cancel
-                    </button>
-                  </td>
-                </tr>
-                <tr id="aprow-8835">
-                  <td>#8835</td>
-                  <td>Tshering Namgay</td>
-                  <td>11410009012</td>
-                  <td>Dr. Karma Wangchuk</td>
-                  <td>General Surgery</td>
-                  <td>2026-04-30</td>
-                  <td><span class="badge status-pending">Pending</span></td>
-                  <td>
-                    <button
-                      class="btn-small btn-activate"
-                      onclick="approveAppt(8835)"
-                    >
-                      Approve
-                    </button>
-                    <button
-                      class="btn-small btn-deact"
-                      onclick="cancelAppt(8835)"
-                    >
-                      Cancel
-                    </button>
-                  </td>
-                </tr>
-                <tr id="aprow-8836">
-                  <td>#8836</td>
-                  <td>Kinley Zangmo</td>
-                  <td>11410003456</td>
-                  <td>Dr. Sonam Tshering</td>
-                  <td>Pediatrics</td>
-                  <td>2026-05-01</td>
-                  <td><span class="badge status-off">Upcoming</span></td>
-                  <td>
-                    <button
-                      class="btn-small btn-deact"
-                      onclick="cancelAppt(8836)"
-                    >
-                      Cancel
-                    </button>
-                  </td>
-                </tr>
-              </tbody>
+              <tbody></tbody>
             </table>
           </div>
-          <div class="mobile-card-list" style="display: none">
-            <div class="note-card" style="border: 1px solid var(--border)">
-              <div class="note-card-header">
-                <strong>#8821 — Dorji Wangchuk</strong
-                ><span class="badge status-on">Approved</span>
-              </div>
-              <p>Dr. Karma · OPD · 2026-04-30</p>
-            </div>
-            <div class="note-card" style="border: 1px solid var(--border)">
-              <div class="note-card-header">
-                <strong>#8834 — Pema Seldon</strong
-                ><span class="badge status-pending">Pending</span>
-              </div>
-              <p>Dr. Karma · Cardiology · 2026-04-30</p>
-            </div>
-            <div class="note-card" style="border: 1px solid var(--border)">
-              <div class="note-card-header">
-                <strong>#8835 — Tshering Namgay</strong
-                ><span class="badge status-pending">Pending</span>
-              </div>
-              <p>Dr. Karma · General Surgery · 2026-04-30</p>
-            </div>
-          </div>
+          <div class="mobile-card-list" style="display: none"></div>
         </div>
       </section>
 
@@ -639,33 +268,21 @@
               <div class="bar-row">
                 <span class="bar-label">Week 2</span>
                 <div class="bar-track">
-                  <div
-                    class="bar-fill green"
-                    data-w="65%"
-                    style="width: 0"
-                  ></div>
+                  <div class="bar-fill green" data-w="65%" style="width: 0"></div>
                 </div>
                 <span class="bar-val">65</span>
               </div>
               <div class="bar-row">
                 <span class="bar-label">Week 3</span>
                 <div class="bar-track">
-                  <div
-                    class="bar-fill amber"
-                    data-w="90%"
-                    style="width: 0"
-                  ></div>
+                  <div class="bar-fill amber" data-w="90%" style="width: 0"></div>
                 </div>
                 <span class="bar-val">90</span>
               </div>
               <div class="bar-row">
                 <span class="bar-label">Week 4</span>
                 <div class="bar-track">
-                  <div
-                    class="bar-fill rose"
-                    data-w="48%"
-                    style="width: 0"
-                  ></div>
+                  <div class="bar-fill rose" data-w="48%" style="width: 0"></div>
                 </div>
                 <span class="bar-val">48</span>
               </div>
@@ -679,96 +296,15 @@
                 <div class="bar-track">
                   <div class="bar-fill" data-w="85%" style="width: 0"></div>
                 </div>
-                <span class="bar-val">121</span>
+                <span class="bar-val" id="reportPatients">—</span>
               </div>
               <div class="bar-row">
                 <span class="bar-label">Doctors</span>
                 <div class="bar-track">
-                  <div
-                    class="bar-fill green"
-                    data-w="13%"
-                    style="width: 0"
-                  ></div>
+                  <div class="bar-fill green" data-w="13%" style="width: 0"></div>
                 </div>
-                <span class="bar-val">18</span>
+                <span class="bar-val" id="reportDoctors">—</span>
               </div>
-              <div class="bar-row">
-                <span class="bar-label">Admins</span>
-                <div class="bar-track">
-                  <div
-                    class="bar-fill amber"
-                    data-w="2%"
-                    style="width: 0"
-                  ></div>
-                </div>
-                <span class="bar-val">3</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="card">
-          <h3>Summary — April 2026</h3>
-          <div class="form-grid" style="margin-top: 8px">
-            <div>
-              <p
-                style="
-                  font-size: 0.8rem;
-                  color: var(--text-muted);
-                  font-weight: 600;
-                  text-transform: uppercase;
-                  letter-spacing: 0.5px;
-                  margin-bottom: 6px;
-                "
-              >
-                Total Appointments
-              </p>
-              <p style="font-size: 2rem; font-weight: 800">283</p>
-            </div>
-            <div>
-              <p
-                style="
-                  font-size: 0.8rem;
-                  color: var(--text-muted);
-                  font-weight: 600;
-                  text-transform: uppercase;
-                  letter-spacing: 0.5px;
-                  margin-bottom: 6px;
-                "
-              >
-                Prescriptions Issued
-              </p>
-              <p style="font-size: 2rem; font-weight: 800">194</p>
-            </div>
-            <div>
-              <p
-                style="
-                  font-size: 0.8rem;
-                  color: var(--text-muted);
-                  font-weight: 600;
-                  text-transform: uppercase;
-                  letter-spacing: 0.5px;
-                  margin-bottom: 6px;
-                "
-              >
-                New Patients
-              </p>
-              <p style="font-size: 2rem; font-weight: 800">37</p>
-            </div>
-            <div>
-              <p
-                style="
-                  font-size: 0.8rem;
-                  color: var(--text-muted);
-                  font-weight: 600;
-                  text-transform: uppercase;
-                  letter-spacing: 0.5px;
-                  margin-bottom: 6px;
-                "
-              >
-                Avg. Daily Appts
-              </p>
-              <p style="font-size: 2rem; font-weight: 800">9.4</p>
             </div>
           </div>
         </div>
@@ -777,70 +313,103 @@
       <!-- ══ SETTINGS ══ -->
       <section id="settings" class="page-section">
         <h1>System Settings</h1>
+
+        <!-- Success / error notice -->
+        <div id="settingsNotice" class="settings-notice" style="display:none"></div>
+
+        <!-- Hospital Name -->
         <div class="card">
-          <h3>General Configuration</h3>
-          <form id="settingsForm" style="margin-top: 16px">
-            <div class="form-grid">
-              <div class="form-group">
-                <label>Hospital Name</label
-                ><input type="text" value="MediConnect Hospital" />
-              </div>
-              <div class="form-group">
-                <label>Admin Email</label
-                ><input type="email" value="admin@gmail.com" />
-              </div>
-              <div class="form-group">
-                <label>Max Appointments / Day</label
-                ><input type="number" value="50" />
-              </div>
-              <div class="form-group">
-                <label>Slot Duration</label
-                ><select>
-                  <option>30 minutes</option>
-                  <option>20 minutes</option>
-                  <option>15 minutes</option>
-                </select>
-              </div>
-              <div class="form-group">
-                <label>Working Hours Start</label
-                ><input type="time" value="09:00" />
-              </div>
-              <div class="form-group">
-                <label>Working Hours End</label
-                ><input type="time" value="17:00" />
+          <h3>Hospital Name</h3>
+          <div class="form-group" style="max-width: 420px">
+            <label>Hospital Name</label>
+            <input type="text" id="hospitalNameInput" placeholder="e.g. MediConnect Hospital" />
+          </div>
+          <br />
+          <button class="btn-primary" onclick="saveHospitalName()">
+            <i class="fas fa-save" style="margin-right: 8px"></i>Save
+          </button>
+        </div>
+
+        <!-- Admin Email -->
+        <div class="card">
+          <h3>Admin Email</h3>
+          <div class="form-group" style="max-width: 420px">
+            <label>Email Address</label>
+            <input type="email" id="adminEmailInput" placeholder="admin@example.com" />
+          </div>
+          <br />
+          <button class="btn-primary" onclick="saveAdminEmail()">
+            <i class="fas fa-save" style="margin-right: 8px"></i>Update Email
+          </button>
+        </div>
+
+        <!-- Change Password -->
+        <div class="card">
+          <h3>Change Password</h3>
+          <div class="form-grid" style="max-width: 620px">
+            <div class="form-group">
+              <label>Current Password</label>
+              <div class="pw-wrap">
+                <input type="password" id="settingsCurrentPass" placeholder="Current password" />
+                <button type="button" class="pw-eye" onclick="togglePw('settingsCurrentPass', this)" tabindex="-1">
+                  <i class="fas fa-eye"></i>
+                </button>
               </div>
             </div>
-            <button type="submit" class="btn-primary" style="margin-top: 20px">
-              <i class="fas fa-save" style="margin-right: 8px"></i>Save Settings
-            </button>
-          </form>
+            <div class="form-group">
+              <label>New Password</label>
+              <div class="pw-wrap">
+                <input type="password" id="settingsNewPass" placeholder="New password" />
+                <button type="button" class="pw-eye" onclick="togglePw('settingsNewPass', this)" tabindex="-1">
+                  <i class="fas fa-eye"></i>
+                </button>
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Confirm New Password</label>
+              <div class="pw-wrap">
+                <input type="password" id="settingsConfirmPass" placeholder="Confirm new password" />
+                <button type="button" class="pw-eye" onclick="togglePw('settingsConfirmPass', this)" tabindex="-1">
+                  <i class="fas fa-eye"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+          <br />
+          <button class="btn-primary" onclick="saveAdminPassword()">
+            <i class="fas fa-lock" style="margin-right: 8px"></i>Change Password
+          </button>
         </div>
+
+        <!-- System Information -->
         <div class="card">
           <h3>System Information</h3>
           <div class="info-row">
-            <span class="info-key">Version</span
-            ><span class="info-value">MediConnect v2.4.1</span>
+            <span class="info-key">Version</span>
+            <span class="info-value">MediConnect v2.4.1</span>
           </div>
           <div class="info-row">
-            <span class="info-key">Database</span
-            ><span class="info-value">PostgreSQL 15 · Connected</span>
+            <span class="info-key">Database</span>
+            <span class="info-value">PostgreSQL 15 · Connected</span>
           </div>
           <div class="info-row">
-            <span class="info-key">Last Backup</span
-            ><span class="info-value">30 Apr 2026, 03:00 AM</span>
-          </div>
-          <div class="info-row">
-            <span class="info-key">Environment</span
-            ><span class="info-value">Production</span>
+            <span class="info-key">Environment</span>
+            <span class="info-value">Production</span>
           </div>
         </div>
       </section>
+
+      <!-- ══ DOCTORS ══ -->
       <section id="doctors" class="page-section">
         <h1>Doctor Management</h1>
         <div class="card">
           <h3>Add New Doctor</h3>
           <form id="addDoctorForm" style="margin-top: 16px">
             <div class="form-grid">
+              <div class="form-group">
+                <label>Doctor ID</label>
+                <input type="number" id="newDoctorId" placeholder="e.g. 1001" />
+              </div>
               <div class="form-group">
                 <label>Full Name</label>
                 <input type="text" id="newDoctorName" placeholder="Doctor's full name" required />
@@ -850,12 +419,14 @@
                 <input type="text" id="newDoctorSpec" placeholder="e.g. Cardiology" />
               </div>
               <div class="form-group">
-                <label>Department ID</label>
-                <input type="number" id="newDoctorDept" placeholder="e.g. 1" />
+                <label>Chamber</label>
+                <select id="newDoctorChamber">
+                  <option value="">— Select chamber —</option>
+                </select>
               </div>
               <div class="form-group">
                 <label>Password</label>
-                <input type="password" id="newDoctorPass" placeholder="Temporary password" required />
+                <input type="password" id="newDoctorPass" placeholder="Set password" required />
               </div>
             </div>
             <button type="submit" class="btn-primary" style="margin-top: 20px">
@@ -873,20 +444,17 @@
                   <th>Name</th>
                   <th>Specialization</th>
                   <th>Department</th>
+                  <th>Chamber</th>
                   <th>Action</th>
                 </tr>
               </thead>
-              <tbody>
-                <!-- populated by loadAllDoctors() in admin.js -->
-              </tbody>
+              <tbody></tbody>
             </table>
           </div>
-          <div class="mobile-card-list" style="display: none">
-            <!-- populated dynamically -->
-          </div>
+          <div class="mobile-card-list" style="display: none"></div>
         </div>
       </section>
     </main>
-    <script src="js/admin.js?v=2"></script>
+    <script src="js/admin.js?v=3"></script>
   </body>
 </html>

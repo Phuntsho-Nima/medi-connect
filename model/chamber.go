@@ -33,9 +33,10 @@ func (c *Chamber) Create() error {
 
 // Read fetches a single chamber by ID joined with department name and doctor count
 const queryGetChamberById = `
-	SELECT c.chamber_no, c.chamber_name, c.availability_status, c.department_id,
-		COALESCE(dep.department_name, '') as department_name,
-		COUNT(cd.doctor_id) as doctor_count
+	SELECT c.chamber_no, c.chamber_name, c.availability_status,
+		COALESCE(c.department_id, 0) AS department_id,
+		COALESCE(dep.department_name, '') AS department_name,
+		COUNT(cd.doctor_id) AS doctor_count
 	FROM chambers c
 	LEFT JOIN departments dep ON c.department_id = dep.department_id
 	LEFT JOIN chamber_doctors cd ON c.chamber_no = cd.chamber_no
@@ -75,9 +76,10 @@ func (c *Chamber) Delete() error {
 
 // ReadAll fetches all chambers with department name and assigned doctor count
 const queryGetAllChambers = `
-	SELECT c.chamber_no, c.chamber_name, c.availability_status, c.department_id,
-		COALESCE(dep.department_name, '') as department_name,
-		COUNT(cd.doctor_id) as doctor_count
+	SELECT c.chamber_no, c.chamber_name, c.availability_status,
+		COALESCE(c.department_id, 0) AS department_id,
+		COALESCE(dep.department_name, '') AS department_name,
+		COUNT(cd.doctor_id) AS doctor_count
 	FROM chambers c
 	LEFT JOIN departments dep ON c.department_id = dep.department_id
 	LEFT JOIN chamber_doctors cd ON c.chamber_no = cd.chamber_no

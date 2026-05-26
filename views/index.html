@@ -25,9 +25,6 @@
         <li onclick="showPage('appointments', this)">
           <i class="fas fa-calendar-check"></i> <span>Appointments</span>
         </li>
-        <li onclick="showPage('records', this)">
-          <i class="fas fa-file-medical"></i> <span>Records</span>
-        </li>
         <li onclick="showPage('profile', this)">
           <i class="fas fa-user-circle"></i> <span>Profile</span>
         </li>
@@ -69,10 +66,6 @@
         >
           <i class="fas fa-calendar-check"></i>
           Book
-        </li>
-        <li id="bnav-records" onclick="showPage('records', null, 'Records')">
-          <i class="fas fa-file-medical"></i>
-          Records
         </li>
         <li id="bnav-profile" onclick="showPage('profile', null, 'Profile')">
           <i class="fas fa-user-circle"></i>
@@ -141,13 +134,6 @@
             <i class="fas fa-plus-circle"></i>
             Book Appointment
           </button>
-          <button
-            class="quick-action-btn"
-            onclick="showPage('records', null, 'Records')"
-          >
-            <i class="fas fa-file-medical"></i>
-            My Records
-          </button>
         </div>
 
         <div class="stats-grid">
@@ -159,16 +145,6 @@
             <div class="stat-content">
               <h4>2</h4>
               <p>Upcoming Appointments</p>
-            </div>
-          </div>
-          <div
-            class="stat-card green"
-            onclick="showPage('records', null, 'Records')"
-          >
-            <div class="stat-icon"><i class="fas fa-file-medical"></i></div>
-            <div class="stat-content">
-              <h4>5</h4>
-              <p>Medical Records</p>
             </div>
           </div>
         </div>
@@ -386,16 +362,6 @@
         </div>
       </section>
 
-      <!-- RECORDS -->
-      <section id="records" class="page-section">
-        <h1>Medical Records</h1>
-        <div class="card">
-          <h3>Your Records</h3>
-          <div id="recordsContainer" style="margin-top: 16px">
-            <p style="color:var(--text-muted)">Loading records...</p>
-          </div>
-        </div>
-      </section>
       <!-- PROFILE -->
       <section id="profile" class="page-section">
         <h1>My Profile</h1>
@@ -413,6 +379,10 @@
               <div class="form-group">
                 <label>Dzongkhag</label>
                 <input type="text" id="profileDzongkhag" placeholder="Dzongkhag" />
+              </div>
+              <div class="form-group">
+                <label>Gewog</label>
+                <input type="text" id="profileGewog" placeholder="Gewog" />
               </div>
               <div class="form-group">
                 <label>Phone</label>
@@ -434,6 +404,28 @@
             </div>
             <br />
             <button type="submit" class="btn-primary">Save Changes</button>
+          </form>
+        </div>
+
+        <div class="card" style="margin-top:24px">
+          <h3>Change Password</h3>
+          <form id="changePasswordForm" style="margin-top:16px">
+            <div class="form-grid">
+              <div class="form-group">
+                <label>Current Password</label>
+                <input type="password" id="currentPassword" placeholder="Current password" required />
+              </div>
+              <div class="form-group">
+                <label>New Password</label>
+                <input type="password" id="newPassword" placeholder="New password" required />
+              </div>
+              <div class="form-group">
+                <label>Confirm New Password</label>
+                <input type="password" id="confirmPassword" placeholder="Confirm new password" required />
+              </div>
+            </div>
+            <br />
+            <button type="submit" class="btn-primary">Change Password</button>
           </form>
         </div>
       </section>

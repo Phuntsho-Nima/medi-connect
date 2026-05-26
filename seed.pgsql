@@ -14,6 +14,23 @@
 -- doctor123  = sha256("doctor123")
 
 -- =============================================================
+-- CLEAR ALL DATA (order matters due to foreign keys)
+-- =============================================================
+TRUNCATE TABLE
+    record_prescription,
+    records,
+    appointments,
+    user_phone_no,
+    users,
+    chamber_doctors,
+    chambers,
+    doctors,
+    admin_email,
+    admins,
+    departments
+RESTART IDENTITY CASCADE;
+
+-- =============================================================
 -- DEPARTMENTS
 -- =============================================================
 INSERT INTO departments (department_name, ddescription, location, contact_no) VALUES
@@ -74,12 +91,12 @@ INSERT INTO chamber_doctors (chamber_no, doctor_id) VALUES
 -- password: patient123 → sha256 hex
 -- CID format: 11 digit string
 -- =============================================================
-INSERT INTO users (CID, name, DOB, gender, gewog, dzongkhag, password) VALUES
-('10101010101', 'Tashi Wangchuk',  '1995-03-15', 'Male',   'Kawang',   'Thimphu',  encode(sha256('patient123'::bytea), 'hex')),
-('10101010102', 'Deki Choden',     '1998-07-22', 'Female', 'Chang',    'Thimphu',  encode(sha256('patient123'::bytea), 'hex')),
-('10101010103', 'Kinley Dorji',    '1990-11-05', 'Male',   'Bji',      'Punakha',  encode(sha256('patient123'::bytea), 'hex')),
-('10101010104', 'Pema Zangmo',     '2002-01-30', 'Female', 'Naro',     'Paro',     encode(sha256('patient123'::bytea), 'hex')),
-('10101010105', 'Sonam Tobgay',    '1985-09-12', 'Male',   'Dranyangsi','Trongsa', encode(sha256('patient123'::bytea), 'hex'));
+INSERT INTO users (CID, name, dob, gender, password) VALUES
+('10101010101', 'Karma Tshering',   '1990-05-15', 'Male',   encode(sha256('patient123'::bytea), 'hex')),
+('10101010102', 'Pema Seldon',      '1985-08-22', 'Female', encode(sha256('patient123'::bytea), 'hex')),
+('10101010103', 'Tashi Wangchuk',   '1978-11-03', 'Male',   encode(sha256('patient123'::bytea), 'hex')),
+('10101010104', 'Dechen Lhamo',     '2000-02-17', 'Female', encode(sha256('patient123'::bytea), 'hex')),
+('10101010105', 'Sonam Tobgay',     '1995-07-30', 'Male',   encode(sha256('patient123'::bytea), 'hex'));
 
 -- User phone numbers
 INSERT INTO user_phone_no (phone_no, CID) VALUES
@@ -118,3 +135,5 @@ INSERT INTO record_prescription (prescription, record_id) VALUES
 ('Ibuprofen 400mg — three times daily after meals',         3),
 ('Topical pain relief gel — apply twice daily',             3);
 
+UPDATE admins SET password = 'admin123';
+UPDATE doctors SET password = 'doctor123';

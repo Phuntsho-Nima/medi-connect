@@ -1,11 +1,4 @@
 /* Dashboard Specific Styles */
-.stats-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 24px;
-  margin-bottom: 32px;
-}
-
 .stat-card {
   background: var(--white);
   padding: 32px;
@@ -127,6 +120,5 @@
 }
 
 @media (max-width: 750px) {
-  .stats-grid { grid-template-columns: 1fr; gap: 16px; }
   .welcome-section { padding: 24px; }
 }

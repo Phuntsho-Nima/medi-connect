@@ -248,6 +248,46 @@ func UpdateAppointmentStatus(w http.ResponseWriter, r *http.Request) {
 	httpResp.RespondWithJSON(w, http.StatusOK, map[string]string{"message": "status updated"})
 }
 
+func GetDoctorPatients(w http.ResponseWriter, r *http.Request) {
+	chamberNo, err := strconv.Atoi(mux.Vars(r)["chamberId"])
+	if err != nil {
+		httpResp.RespondWithError(w, http.StatusBadRequest, "invalid chamber id")
+		return
+	}
+
+	patients, err := model.ReadDistinctPatientsByChamber(chamberNo)
+	if err != nil {
+		log.Println("DB error:", err)
+		httpResp.RespondWithError(w, http.StatusInternalServerError, "could not fetch patients")
+		return
+	}
+
+	if patients == nil {
+		patients = []model.PatientSummary{}
+	}
+	httpResp.RespondWithJSON(w, http.StatusOK, patients)
+}
+
+func GetDoctorActivity(w http.ResponseWriter, r *http.Request) {
+	chamberNo, err := strconv.Atoi(mux.Vars(r)["chamberId"])
+	if err != nil {
+		httpResp.RespondWithError(w, http.StatusBadRequest, "invalid chamber id")
+		return
+	}
+
+	acts, err := model.ReadRecentCompletedByChamber(chamberNo, 5)
+	if err != nil {
+		log.Println("DB error:", err)
+		httpResp.RespondWithError(w, http.StatusInternalServerError, "could not fetch activity")
+		return
+	}
+
+	if acts == nil {
+		acts = []model.Appointment{}
+	}
+	httpResp.RespondWithJSON(w, http.StatusOK, acts)
+}
+
 func GetBookedSlots(w http.ResponseWriter, r *http.Request) {
 	chamberNo, err := strconv.ParseInt(r.URL.Query().Get("chamber_no"), 10, 64)
 	if err != nil {

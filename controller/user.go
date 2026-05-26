@@ -190,34 +190,48 @@ func UpdateUser(w http.ResponseWriter, r *http.Request) {
 	httpResp.RespondWithJSON(w, http.StatusOK, map[string]string{"message": "profile updated"})
 }
 
-// DeleteUser handles DELETE /user/{cid}
-// Removes a user from the system (admin use)
-func DeleteUser(w http.ResponseWriter, r *http.Request) {
+// ChangePassword handles PUT /user/{cid}/password
+// Verifies current password then replaces it with the new one
+func ChangePassword(w http.ResponseWriter, r *http.Request) {
 	cid := mux.Vars(r)["cid"]
 
-	u := model.User{Cid: cid}
-	if err := u.Delete(); err != nil {
-		switch err {
-		case sql.ErrNoRows:
+	var body struct {
+		CurrentPassword string `json:"current_password"`
+		NewPassword     string `json:"new_password"`
+	}
+	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
+		httpResp.RespondWithError(w, http.StatusBadRequest, "invalid json body")
+		return
+	}
+	defer r.Body.Close()
+
+	if body.CurrentPassword == "" || body.NewPassword == "" {
+		httpResp.RespondWithError(w, http.StatusBadRequest, "current_password and new_password are required")
+		return
+	}
+
+	stored, err := model.GetPasswordByCID(cid)
+	if err != nil {
+		if err == sql.ErrNoRows {
 			httpResp.RespondWithError(w, http.StatusNotFound, "user not found")
-		default:
+		} else {
 			log.Println("DB error:", err)
-			httpResp.RespondWithError(w, http.StatusInternalServerError, "could not delete user")
+			httpResp.RespondWithError(w, http.StatusInternalServerError, "could not verify password")
 		}
 		return
 	}
 
-	httpResp.RespondWithJSON(w, http.StatusOK, map[string]string{"message": "user deleted"})
-}
-
-// GetAllUsers handles GET /users
-// Returns all registered patients (admin use)
-func GetAllUsers(w http.ResponseWriter, r *http.Request) {
-	users, err := model.ReadAllUsers()
-	if err != nil {
-		log.Println("DB error:", err)
-		httpResp.RespondWithError(w, http.StatusInternalServerError, "could not fetch users")
+	if stored != body.CurrentPassword {
+		httpResp.RespondWithError(w, http.StatusBadRequest, "current password is incorrect")
 		return
 	}
-	httpResp.RespondWithJSON(w, http.StatusOK, users)
+
+	if err := model.UpdatePassword(cid, body.NewPassword); err != nil {
+		log.Println("DB error:", err)
+		httpResp.RespondWithError(w, http.StatusInternalServerError, "could not update password")
+		return
+	}
+
+	httpResp.RespondWithJSON(w, http.StatusOK, map[string]string{"message": "password updated"})
 }
+

@@ -139,3 +139,18 @@ func CIDExists(cid string) (bool, error) {
 	err := postgres.Db.QueryRow(queryCheckCID, cid).Scan(&count)
 	return count > 0, err
 }
+
+const queryGetPassword = `SELECT password FROM users WHERE CID = $1;`
+
+func GetPasswordByCID(cid string) (string, error) {
+	var pw string
+	err := postgres.Db.QueryRow(queryGetPassword, cid).Scan(&pw)
+	return pw, err
+}
+
+const queryUpdatePassword = `UPDATE users SET password = $1 WHERE CID = $2 RETURNING CID;`
+
+func UpdatePassword(cid, newPassword string) error {
+	var id string
+	return postgres.Db.QueryRow(queryUpdatePassword, newPassword, cid).Scan(&id)
+}

@@ -23,3 +23,8 @@ func CountTodayAppointments(dest *int) error {
 		"SELECT COUNT(*) FROM appointments WHERE appointment_date = CURRENT_DATE",
 	).Scan(dest)
 }
+
+// CountAllAppointments returns the total number of appointments ever booked
+func CountAllAppointments(dest *int) error {
+	return postgres.Db.QueryRow("SELECT COUNT(*) FROM appointments").Scan(dest)
+}

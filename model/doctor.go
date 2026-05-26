@@ -6,11 +6,13 @@ import (
 )
 
 type Doctor struct {
-	DoctorId       int    `json:"doctorId"`
+	DoctorId       int    `json:"doctor_id"`
 	Name           string `json:"name"`
 	Specialization string `json:"specialization"`
-	DepartmentId   int    `json:"departmentId"`
-	DepartmentName string `json:"departmentName"`
+	DepartmentId   int    `json:"department_id"`
+	DepartmentName string `json:"department_name"`
+	ChamberNo      int    `json:"chamber_no"`
+	ChamberName    string `json:"chamber_name"`
 	Password       string `json:"password,omitempty"`
 }
 
@@ -20,9 +22,29 @@ const queryInsertDoctor = `
 	RETURNING doctor_id;`
 
 func (d *Doctor) Create() error {
+	var deptId interface{}
+	if d.DepartmentId != 0 {
+		deptId = d.DepartmentId
+	}
 	return postgres.Db.QueryRow(
 		queryInsertDoctor,
-		d.Name, d.Specialization, d.DepartmentId, d.Password,
+		d.Name, d.Specialization, deptId, d.Password,
+	).Scan(&d.DoctorId)
+}
+
+const queryInsertDoctorWithId = `
+	INSERT INTO doctors (doctor_id, name, specialization, department_id, password)
+	VALUES ($1, $2, $3, $4, $5)
+	RETURNING doctor_id;`
+
+func (d *Doctor) CreateWithManualId() error {
+	var deptId interface{}
+	if d.DepartmentId != 0 {
+		deptId = d.DepartmentId
+	}
+	return postgres.Db.QueryRow(
+		queryInsertDoctorWithId,
+		d.DoctorId, d.Name, d.Specialization, deptId, d.Password,
 	).Scan(&d.DoctorId)
 }
 
@@ -43,9 +65,13 @@ const queryUpdateDoctor = `
 	WHERE doctor_id = $4 RETURNING doctor_id;`
 
 func (d *Doctor) Update() error {
+	var deptId interface{}
+	if d.DepartmentId != 0 {
+		deptId = d.DepartmentId
+	}
 	return postgres.Db.QueryRow(
 		queryUpdateDoctor,
-		d.Name, d.Specialization, d.DepartmentId, d.DoctorId,
+		d.Name, d.Specialization, deptId, d.DoctorId,
 	).Scan(&d.DoctorId)
 }
 
@@ -57,9 +83,19 @@ func (d *Doctor) Delete() error {
 }
 
 const queryGetAllDoctors = `
-	SELECT d.doctor_id, d.name, d.specialization, d.department_id, COALESCE(dep.department_name, '') as department_name
+	SELECT d.doctor_id, d.name, d.specialization, d.department_id,
+	       COALESCE(dep.department_name, '') AS department_name,
+	       COALESCE(ch.chamber_no, 0)        AS chamber_no,
+	       COALESCE(ch.chamber_name, '')     AS chamber_name
 	FROM doctors d
 	LEFT JOIN departments dep ON d.department_id = dep.department_id
+	LEFT JOIN LATERAL (
+	    SELECT c.chamber_no, c.chamber_name
+	    FROM chamber_doctors cd
+	    JOIN chambers c ON cd.chamber_no = c.chamber_no
+	    WHERE cd.doctor_id = d.doctor_id
+	    LIMIT 1
+	) ch ON true
 	ORDER BY d.name;`
 
 func ReadAllDoctors() ([]Doctor, error) {
@@ -72,7 +108,7 @@ func ReadAllDoctors() ([]Doctor, error) {
 	var doctors []Doctor
 	for rows.Next() {
 		var d Doctor
-		if err := rows.Scan(&d.DoctorId, &d.Name, &d.Specialization, &d.DepartmentId, &d.DepartmentName); err != nil {
+		if err := rows.Scan(&d.DoctorId, &d.Name, &d.Specialization, &d.DepartmentId, &d.DepartmentName, &d.ChamberNo, &d.ChamberName); err != nil {
 			return nil, err
 		}
 		doctors = append(doctors, d)

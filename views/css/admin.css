@@ -16,7 +16,7 @@
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   cursor: pointer;
-}}
+}
 
 /* Desktop nav active */
 .desktop-nav-links li.active,
@@ -51,10 +51,31 @@ select:focus, input:focus { border-color: var(--role-color); box-shadow: 0 0 0 4
 /* ── STAT CARDS ── */
 .stats-grid-4 { display: grid; grid-template-columns: repeat(4,1fr); gap: 20px; margin-bottom: 32px; }
 
+/* All admin stat cards are informational — no pointer or hover effects */
+.stat-card.purple,
+.stat-card.blue,
+.stat-card.amber,
+.stat-card.rose {
+  cursor: default;
+  transition: none;
+}
+.stat-card.purple:hover,
+.stat-card.blue:hover,
+.stat-card.amber:hover,
+.stat-card.rose:hover {
+  transform: none;
+  box-shadow: var(--shadow-md);
+}
+
 .stat-card.purple { background: var(--role-grad); color: #fff; }
 .stat-card.purple .stat-icon { background: rgba(255,255,255,0.2); color: #fff; }
 .stat-card.purple .stat-content h4,
 .stat-card.purple .stat-content p { color: #fff; }
+
+.stat-card.blue { background: linear-gradient(135deg,#eff6ff,#dbeafe); }
+.stat-card.blue .stat-icon { background: #bfdbfe; color: #1d4ed8; }
+.stat-card.blue .stat-content h4,
+.stat-card.blue .stat-content p { color: var(--text-main); }
 
 .stat-card.amber { background: linear-gradient(135deg,#fff,#fffbeb); }
 .stat-card.amber .stat-icon { background: #fef3c7; color: #d97706; }
@@ -118,11 +139,64 @@ select:focus, input:focus { border-color: var(--role-color); box-shadow: 0 0 0 4
 }
 .notice-banner i { font-size:1rem; flex-shrink:0; }
 
+/* ── SETTINGS NOTICE BANNER ── */
+.settings-notice {
+  padding: 14px 20px;
+  border-radius: 10px;
+  margin-bottom: 20px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.settings-notice.success {
+  background: #dcfce7;
+  color: #15803d;
+  border: 1px solid #bbf7d0;
+}
+.settings-notice.error {
+  background: #fee2e2;
+  color: #dc2626;
+  border: 1px solid #fca5a5;
+}
+
+/* ── PASSWORD FIELD WITH EYE TOGGLE ── */
+.pw-wrap {
+  position: relative;
+}
+.pw-wrap input {
+  padding-right: 44px;
+}
+.pw-eye {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  padding: 4px 6px;
+  line-height: 1;
+}
+.pw-eye:hover { color: var(--text-main); }
+
 /* ── SETTINGS INFO ROWS ── */
 .info-row { display:flex; justify-content:space-between; align-items:center; padding:13px 0; border-bottom:1px solid var(--border); }
 .info-row:last-child { border-bottom:none; }
 .info-key   { font-weight:600; color:var(--text-muted); font-size:0.9rem; }
 .info-value { font-weight:700; color:var(--text-main); }
+
+/* ── APPOINTMENTS TABLE — SCROLLABLE ON MEDIUM SCREENS ── */
+#appointments .desktop-table {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+#appointments .desktop-table table {
+  min-width: 760px;
+}
 
 /* ── RESPONSIVE ── */
 @media (max-width: 950px) {
@@ -136,4 +210,60 @@ select:focus, input:focus { border-color: var(--role-color); box-shadow: 0 0 0 4
   .stat-content h4 { font-size:1.5rem; }
   .stat-content p  { font-size:0.78rem; }
   .dash-cols { gap:0; }
+
+  /* ── APPOINTMENTS MOBILE CARDS ── */
+  #appointments .apt-mobile-card {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 16px 18px;
+    margin-bottom: 12px;
+    box-shadow: 0 1px 6px rgba(0,0,0,0.06);
+  }
+  #appointments .apt-mc-id {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--text-main);
+    margin-bottom: 8px;
+  }
+  #appointments .apt-mc-status {
+    margin-bottom: 12px;
+  }
+  #appointments .apt-mc-row {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    padding: 7px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  #appointments .apt-mc-row.apt-mc-row-last {
+    border-bottom: none;
+  }
+  #appointments .apt-mc-label {
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: var(--text-muted);
+    min-width: 52px;
+    flex-shrink: 0;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+  }
+  #appointments .apt-mc-value {
+    font-size: 0.88rem;
+    font-weight: 500;
+    color: var(--text-main);
+  }
+  #appointments .apt-mc-actions {
+    margin-top: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  #appointments .apt-mc-btn {
+    width: 100%;
+    text-align: center;
+    padding-top: 9px;
+    padding-bottom: 9px;
+    font-size: 0.88rem;
+  }
 }
