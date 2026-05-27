@@ -1,0 +1,18 @@
+                   List of relations
+ Schema |        Name         | Type  |     Owner      
+--------+---------------------+-------+----------------
+ public | admin_email         | table | postgres_admin
+ public | admins              | table | postgres_admin
+ public | appointments        | table | postgres_admin
+ public | chamber_doctors     | table | postgres_admin
+ public | chambers            | table | postgres_admin
+ public | config              | table | postgres_admin
+ public | departments         | table | postgres_admin
+ public | doctors             | table | postgres_admin
+ public | record_prescription | table | postgres_admin
+ public | records             | table | postgres_admin
+ public | sessions            | table | postgres_admin
+ public | user_phone_no       | table | postgres_admin
+ public | users               | table | postgres_admin
+(13 rows)
+
